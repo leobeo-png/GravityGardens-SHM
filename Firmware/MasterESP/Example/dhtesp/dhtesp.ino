@@ -2,6 +2,7 @@
 #include "ESPAsyncWebServer.h"
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
+#include "LittleFS.h"
 
 // Replace with the network credentials (make sure the PC is also on the same network)
 const char* ssid = "Pixel_5658";
@@ -58,140 +59,20 @@ String readDHTHumidity(DHT& dht) {
 //   return data;
 // }
 
-// HTML content to display on the web page
-const char index_html[] PROGMEM = R"rawliteral(
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ESP32 Sensor Dashboard</title>
-  <style>
-    body, html {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #333;
-      background-color: #f4f4f9;
-      text-align: center;
-    }
-    header {
-      background-color: #2c3e50;
-      color: #ecf0f1;
-      padding: 1rem;
-      position: fixed;
-      width: 100%;
-      top: 0;
-      left: 0;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    .container {
-      margin-top: 120px; /* Space for fixed header */
-      display: grid;
-      grid-template-columns: repeat(2, 1fr); /* 2 columns */
-      gap: 20px; /* Space between cards */
-      justify-content: center;
-      padding: 1rem;
-    }
-    .card {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      width: 250px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .card:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-    }
-    .temperature { color: #e67e22; }
-    .humidity { color: #3498db; }
-    .reading { font-size: 2rem; }
-    h3 {
-      margin: 0;
-      font-size: 1.2rem;
-    }
-  </style>
-</head>
-<body>
+// Initialize LittleFS
+void initLittleFS() {
+  if (!LittleFS.begin()) {
+    Serial.println("An error has occurred while mounting LittleFS");
+  }
+  else{
+    Serial.println("LittleFS mounted successfully");
+  }
+}
 
-  <header>
-    <h1>ESP32 Sensor Dashboard</h1>
-  </header>
-
-  <div class="container">
-    <!-- Sensor 1 -->
-    <div class="card temperature">
-      <h3>Sensor 1 - Temperature</h3>
-      <p class="reading" id="temperature1">--</p>
-    </div>
-    <div class="card humidity">
-      <h3>Sensor 1 - Humidity</h3>
-      <p class="reading" id="humidity1">--</p>
-    </div>
-
-    <!-- Sensor 2 -->
-    <div class="card temperature">
-      <h3>Sensor 2 - Temperature</h3>
-      <p class="reading" id="temperature2">--</p>
-    </div>
-    <div class="card humidity">
-      <h3>Sensor 2 - Humidity</h3>
-      <p class="reading" id="humidity2">--</p>
-    </div>
-
-    <!-- Sensor 3 -->
-    <div class="card temperature">
-      <h3>Sensor 3 - Temperature</h3>
-      <p class="reading" id="temperature3">--</p>
-    </div>
-    <div class="card humidity">
-      <h3>Sensor 3 - Humidity</h3>
-      <p class="reading" id="humidity3">--</p>
-    </div>
-  </div>
-
-  <script>
-    function fetchData(sensorId) {
-      // Fetch temperature for the sensor
-      setInterval(function () {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-          if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("temperature" + sensorId).innerHTML = this.responseText + " °C";
-          }
-        };
-        xhttp.open("GET", "/temperature" + sensorId, true);
-        xhttp.send();
-      }, 4000); // 4 seconds interval
-
-      // Fetch humidity for the sensor
-      setInterval(function () {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-          if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("humidity" + sensorId).innerHTML = this.responseText + " %";
-          }
-        };
-        xhttp.open("GET", "/humidity" + sensorId, true);
-        xhttp.send();
-      }, 4000); // 4 seconds interval
-    }
-
-    // Call fetchData for all three sensors
-    fetchData(1);  // Sensor 1
-    fetchData(2);  // Sensor 2
-    fetchData(3);  // Sensor 3
-
-  </script>
-
-</body>
-</html>
-)rawliteral";
 
 void setup() {
   Serial.begin(115200);
-
+  initLittleFS();
   dht1.begin();
   dht2.begin();
   dht3.begin();
@@ -203,6 +84,13 @@ void setup() {
   }
 
   Serial.println(WiFi.localIP());
+
+  // Web Server Root URL
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/index.html", "text/html");
+  });
+
+  server.serveStatic("/", LittleFS, "/");
 
 // Serve temperature and humidity data for each sensor as plain text
   server.on("/temperature1", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -229,10 +117,6 @@ void setup() {
     request->send(200, "text/plain", readDHTHumidity(dht3));
   });
 
-  // load the HTML web page
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send_P(200, "text/html", index_html);
-  });
 
   server.begin();
 }
