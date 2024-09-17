@@ -1,4 +1,4 @@
-# GravityGardens-SMH
+# GravityGardens-SHM
 This repository is for the Project Gravity Gardens Small Hypergravity Machine. 
 # How to setup the ESP32 for Arduino IDE
 Refer to this [guide](https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/).
