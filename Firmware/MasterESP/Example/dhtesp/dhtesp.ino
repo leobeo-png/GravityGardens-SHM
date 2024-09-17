@@ -4,6 +4,7 @@
 #include <DHT.h>
 #include "LittleFS.h"
 
+
 // Replace with the network credentials (make sure the PC is also on the same network)
 const char* ssid = "Pixel_5658";
 const char* password = "leo07072005";
@@ -44,21 +45,7 @@ String readDHTHumidity(DHT& dht) {
   }
 }
 
-// String getSensorDataCSV() {
-//   // Read data from each sensor
-//   String t1 = readDHTTemperature(dht1);
-//   String h1 = readDHTHumidity(dht1);
-//   String t2 = readDHTTemperature(dht2);
-//   String h2 = readDHTHumidity(dht2);
-//   String t3 = readDHTTemperature(dht3);
-//   String h3 = readDHTHumidity(dht3);
-
-//   // Format: t1,h1,t2,h2,t3,h3
-//   String data = t1 + "," + h1 + "," + t2 + "," + h2 + "," + t3 + "," + h3;
-
-//   return data;
-// }
-
+  
 // Initialize LittleFS
 void initLittleFS() {
   if (!LittleFS.begin()) {
@@ -90,6 +77,8 @@ void setup() {
     request->send(LittleFS, "/index.html", "text/html");
   });
 
+  // Route to load style.css file
+
   server.serveStatic("/", LittleFS, "/");
 
 // Serve temperature and humidity data for each sensor as plain text
@@ -117,10 +106,9 @@ void setup() {
     request->send(200, "text/plain", readDHTHumidity(dht3));
   });
 
-
   server.begin();
 }
 
 void loop() {
-  delay(1000); // need some sort of delay for the CPU, if not then overtime it will crash and "Panic"
+// Nothing
 }
