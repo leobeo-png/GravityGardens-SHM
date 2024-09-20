@@ -8,4 +8,4 @@ LittleFS allows the HTML, CSS and JavaScript to be uploaded and accessed on the 
 
 
 
-The Embedded Systems documentation can be found [here] (https://docs.google.com/document/d/1yqqiMzjETktpeUCmVOw1XjPWxqupdX1V/edit?usp=sharing&ouid=112255443107490151474&rtpof=true&sd=true)
+The Embedded Systems documentation can be found [here](https://docs.google.com/document/d/1yqqiMzjETktpeUCmVOw1XjPWxqupdX1V/edit?usp=sharing&ouid=112255443107490151474&rtpof=true&sd=true)
