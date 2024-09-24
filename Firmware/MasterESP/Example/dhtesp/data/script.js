@@ -1,5 +1,3 @@
-
-
 var chartT = new Highcharts.Chart({
   chart:{
     renderTo:'chart-temperature'
@@ -95,7 +93,7 @@ function fetchTemperatureData(sensorId) {
         document.getElementById("temperature" + sensorId).innerHTML = temperature + " °C";
         
         // Add point to the temperature chart and limit to 40 points
-        if (chartT.series[sensorId - 1].data.length > 40) {
+        if (chartT.series[sensorId - 1].data.length > 1000) {
           chartT.series[sensorId - 1].addPoint([x, temperature], true, true, true);
         } else {
           chartT.series[sensorId - 1].addPoint([x, temperature], true, false, true);
@@ -104,7 +102,7 @@ function fetchTemperatureData(sensorId) {
     };
     xhttp.open("GET", "/temperature" + sensorId, true); // Fetch temperature data for the given sensor
     xhttp.send();
-  }, 4000); // 4-second interval for temperature updates
+  }, 10000); // 4-second interval for temperature updates
 }
 var chartH = new Highcharts.Chart({
   chart:{
@@ -204,7 +202,7 @@ function fetchHumidityData(sensorId) {
         document.getElementById("humidity" + sensorId).innerHTML = humidity + " %";
         
         // Add point to the humidity chart and limit to 40 points
-        if (chartH.series[sensorId - 1].data.length > 40) {
+        if (chartH.series[sensorId - 1].data.length > 1000) {
           chartH.series[sensorId - 1].addPoint([x, humidity], true, true, true);
         } else {
           chartH.series[sensorId - 1].addPoint([x, humidity], true, false, true);
@@ -213,11 +211,12 @@ function fetchHumidityData(sensorId) {
     };
     xhttp.open("GET", "/humidity" + sensorId, true); // Fetch humidity data for the given sensor
     xhttp.send();
-  }, 4000); // 4-second interval for humidity updates
+  }, 10000); // 4-second interval for humidity updates
 }
 
 // Call fetchTemperatureData and fetchHumidityData for all sensors
+// Change the "<=" to the number of sensors
 for (let i = 1; i <= 3; i++) {
-  fetchTemperatureData(i);  // Fetch and update temperature for Sensor 1, 2, 3
-  fetchHumidityData(i);     // Fetch and update humidity for Sensor 1, 2, 3
+  fetchTemperatureData(i);  
+  fetchHumidityData(i);     
 }

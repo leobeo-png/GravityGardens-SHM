@@ -6,8 +6,8 @@
 
 
 // Replace with the network credentials (make sure the PC is also on the same network)
-const char* ssid = "Pixel_5658";
-const char* password = "leo07072005";
+const char* ssid = "GG-SHM";
+const char* password = "GravityGardens!";
 
 // DHT Pins
 #define DHTPIN1 27  
@@ -64,12 +64,13 @@ void setup() {
   dht2.begin();
   dht3.begin();
 
+  WiFi.setMinSecurity(WIFI_AUTH_WPA_PSK);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi...");
   }
-
+  
   Serial.println(WiFi.localIP());
 
   // Web Server Root URL

@@ -30,31 +30,7 @@
 	  gap: 20px; /* Space between cards */
 	}
 	
-    .card {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      width: 250px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .card:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-    }
-    .temperature { color: #e67e22; }
-    .humidity { color: #3498db; }
-    .reading { font-size: 2rem; }
-    h3 {
-      margin: 0;
-      font-size: 1.2rem;
-    }
-
-	#chart-humidity, #chart-temperature {
-	  border-radius: 12px;
-	  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-	}
-	
+	/*Swtich Style*/
 	.switch {
 	position: relative; 
 	display: inline-block; 
