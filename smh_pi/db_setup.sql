@@ -1,26 +1,23 @@
 -- GravityGardens DB setup
-DROP USER IF EXISTS 'gguser';
-CREATE USER 'gguser'@'localhost' IDENTIFIED BY 'GravityGardens!';
+DROP USER IF EXISTS gguser;
+FLUSH PRIVILEGES;
+CREATE OR REPLACE USER gguser@"127.0.0.1" IDENTIFIED BY 'GravityGardens!';
+FLUSH PRIVILEGES;
 
 DROP DATABASE IF EXISTS ggdata;
 CREATE DATABASE ggdata;
 GRANT CREATE, ALTER, DROP, INSERT, UPDATE, DELETE, SELECT, REFERENCES ON ggdata.* TO 'gguser'@'localhost';
 FLUSH PRIVILEGES;
 
-USING ggdata;
+USE ggdata;
 
 DROP TABLE IF EXISTS experiments;
 CREATE TABLE experiments (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-	sensornumber INT NOT NULL,
+	sensornumber INT NOT NULL
 );
 
-INSERT INTO experiments (sensornumber) VALUES (1);
-INSERT INTO experiments (sensornumber) VALUES (2);
-INSERT INTO experiments (sensornumber) VALUES (3);
-INSERT INTO experiments (sensornumber) VALUES (4);
-INSERT INTO experiments (sensornumber) VALUES (5);
-INSERT INTO experiments (sensornumber) VALUES (6);
+INSERT INTO experiments (sensornumber) VALUES (1), (2), (3), (4), (5), (6);
 
 -- Database table creation
 DROP TABLE IF EXISTS experimentLogs;
@@ -37,16 +34,18 @@ CREATE TABLE experimentLogs (
 DROP TABLE IF EXISTS wateringLogs;
 CREATE TABLE wateringLogs (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-	FOREIGN KEY (experimentid) REFERENCES experiments(id),
-	wateringtime DATETIME
+	experimentid INT NOT NULL, 
+	wateringtime DATETIME,
+	CONSTRAINT fk_experiment FOREIGN KEY (experimentid) REFERENCES experiments(id)
 );
 
 DROP TABLE IF EXISTS sensorLogs;
 CREATE TABLE sensorLogs (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-	FOREIGN KEY (experimentid) REFERENCES experimentLogs(id),
+	experimentlogid INT NOT NULL,
 	temperature FLOAT,
-	humidity FLOAT
+	humidity FLOAT,
+	CONSTRAINT fk_experimentlog FOREIGN KEY (experimentlogid) REFERENCES experimentLogs(id)
 );
 
 DROP TABLE IF EXISTS speedsensorLogs;
@@ -63,15 +62,16 @@ CREATE TABLE speedsensorLogs (
 );
 
 DROP TABLE IF EXISTS experimentsettings;
-CREATE TABLE settings (
+CREATE TABLE experimentsettings (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	settingname VARCHAR(26) NOT NULL,
 	settingdata VARCHAR(26) NOT NULL
 );
 
-INSERT INTO experimentsettings (settingname, settingdata) VALUES ("lights_cycle_time", "60s");
-INSERT INTO experimentsettings (settingname, settingdata) VALUES ("lights_on_time", "30s");
-INSERT INTO experimentsettings (settingname, settingdata) VALUES ("target_rpm", "1000");
-INSERT INTO experimentsettings (settingname, settingdata) VALUES ("rpm_zero", "180");
-INSERT INTO experimentsettings (settingname, settingdata) VALUES ("rpm_max", "2100");
+INSERT INTO experimentsettings (settingname, settingdata) VALUES 
+	("lights_cycle_time", "60s"), 
+	("lights_on_time", "30s"), 
+	("target_rpm", "1000"), 
+	("rpm_zero", "180"), 
+	("rpm_max", "2100");
 
