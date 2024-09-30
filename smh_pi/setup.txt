@@ -1,0 +1,2 @@
+Execute this oneliner below vv
+git clone https://github.com/leobeo-png/GravityGardens-SMH.git | cd "./GravityGardens-SMH/smh_pi" | sudo sh s3proj.sh
