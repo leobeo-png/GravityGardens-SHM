@@ -104,6 +104,7 @@ function fetchTemperatureData(sensorId) {
     xhttp.send();
   }, 10000); // 4-second interval for temperature updates
 }
+
 var chartH = new Highcharts.Chart({
   chart:{
     renderTo:'chart-humidity'
@@ -214,9 +215,117 @@ function fetchHumidityData(sensorId) {
   }, 10000); // 4-second interval for humidity updates
 }
 
+var chartA = new Highcharts.Chart({
+  chart:{
+    renderTo:'chart-accel'
+  },
+  series: [
+    {
+      name: 'Accelerometer 1 - X',
+      type: 'line',
+      color: '#101D42',
+      marker: {
+        symbol: 'circle',
+        radius: 3,
+        fillColor: '#101D42',
+      }
+    },
+    {
+      name: 'Accelerometer 1 - Y',
+      type: 'line',
+      color: '#00A6A6',
+      marker: {
+        symbol: 'square',
+        radius: 3,
+        fillColor: '#00A6A6',
+      }
+    },
+    {
+      name: 'Accelerometer 1 - Z',
+      type: 'line',
+      color: '#8B2635',
+      marker: {
+        symbol: 'triangle',
+        radius: 3,
+        fillColor: '#8B2635',
+      }
+    },
+    {
+      name: 'Accelerometer 2 - X',
+      type: 'line',
+      color: '#71B48D',
+      marker: {
+        symbol: 'triangle-down',
+        radius: 3,
+        fillColor: '#71B48D',
+      }
+    },
+	{
+      name: 'Accelerometer 2 - Y',
+      type: 'line',
+      color: '#844494',
+      marker: {
+        symbol: 'diamond',
+        radius: 3,
+        fillColor: '#844494',
+      }
+    },
+	{
+      name: 'Accelerometer 2 - Z',
+      type: 'line',
+      color: '#9aa83b',
+      marker: {
+        symbol: 'cross',
+        radius: 3,
+        fillColor: '#9aa83b',
+      }
+    },
+  ],
+  title: {
+    text: undefined
+  },
+  xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: {
+      text: 'Acceleration'
+    }
+  },
+  credits: {
+    enabled: false
+  }
+});
+
+function fetchAccelData(sensorId) {
+  setInterval(function () {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        var x = (new Date()).getTime(),
+            accel = parseFloat(this.responseText); // Parse humidity value from response
+        
+        // Update the corresponding humidity card
+        document.getElementById("accel" + sensorId).innerHTML = accel;
+        
+        // Add point to the humidity chart and limit to 40 points
+        if (chartA.series[sensorId - 1].data.length > 1000) {
+          chartA.series[sensorId - 1].addPoint([x, accel], true, true, true);
+        } else {
+          chartA.series[sensorId - 1].addPoint([x, accel], true, false, true);
+        }
+      }
+    };
+    xhttp.open("GET", "/accel" + sensorId, true); // Fetch humidity data for the given sensor
+    xhttp.send();
+  }, 300); 
+}
+
 // Call fetchTemperatureData and fetchHumidityData for all sensors
 // Change the "<=" to the number of sensors
-for (let i = 1; i <= 3; i++) {
+for (let i = 1; i <= 6; i++) {
   fetchTemperatureData(i);  
-  fetchHumidityData(i);     
+  fetchHumidityData(i); 
+  fetchAccelData(i);
 }

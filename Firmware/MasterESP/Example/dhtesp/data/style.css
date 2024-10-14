@@ -50,7 +50,7 @@
       font-size: 1.2rem;
     }
 
-	#chart-humidity, #chart-temperature {
+	#chart-humidity, #chart-temperature, #chart-accel{
 	  border-radius: 12px;
 	  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 	}
