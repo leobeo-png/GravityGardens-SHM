@@ -24,11 +24,8 @@ DROP TABLE IF EXISTS experimentLogs;
 CREATE TABLE experimentLogs (
 	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 	recordtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	temperature FLOAT,
-	humidity FLOAT,
 	rpm FLOAT,
-	lightstatus BOOLEAN,
-	lastwatered DATETIME
+	lightstatus BOOLEAN
 );
 
 DROP TABLE IF EXISTS wateringLogs;
