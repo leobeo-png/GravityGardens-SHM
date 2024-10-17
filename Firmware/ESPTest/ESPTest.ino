@@ -2,8 +2,8 @@ int rpmBase = 180;
 int rpmMax = 2100;
 int rpmReq = 0;
 int voltageOut = 0;
-const int speedpin = 19;
-const int rpmPin = 14;
+const int speedpin = 12;
+const int rpmPin = 11;
 long lastRot = 0;
 int readr = false;
 float rpm = 0;
@@ -12,10 +12,11 @@ float avgRpm = 0;
 int mode = 1;
 
 // calibration mode vars
-int cmodestart;
-int cmodetestcurrent = 0;
+int cmodestart = 0;
+int cmodetestStartVal = 60;
+int cmodetestcurrent = cmodetestStartVal;
 int printinterval = 0;
-const int cmodetestlength = 2000;
+const int cmodetestlength = 10000;
 const int cmodetestinterval = 10;
 const int cmodetestmaxspeed = 180;
 int calibratedBaseSpeed = 0;
@@ -79,7 +80,7 @@ void loop() {
       // Calibrate
       Serial.println("Calibrate mode");
       mode = 1;
-      cmodetestcurrent = 0;
+      cmodetestcurrent = cmodetestStartVal;
       cmodestart = millis();
     }
   }
@@ -94,7 +95,7 @@ void loop() {
     // Serial.println(voltageOut);
     analogWrite(speedpin, voltageOut);
   } else if(mode == 1) {
-    int currentCalibrationStep = floor((millis() - cmodestart) / cmodetestlength);
+    int currentCalibrationStep = floor((millis() - cmodestart) / cmodetestlength);150
     int currentOut = currentCalibrationStep * cmodetestinterval;
 
     if(currentCalibrationStep == 0) {
