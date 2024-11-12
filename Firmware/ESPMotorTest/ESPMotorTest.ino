@@ -1,7 +1,15 @@
-const int speedpin = 12;
-const int rpmPin = 11;
-int speed = 0;
+const int speedpin = 19;
+const int rpmPin = 14;
+int speed = 187;
 
+int doAutoAdjust = 1;
+long lastAutoAdjust = 0;
+long autoAdjustSpace = 5000;
+long autoAdjustStart = 30000;
+
+int setRpm = 155;
+int setRpmBuffer = 3;
+int setRpmChangeVoltage = 1;
 
 long lastRot = 0;
 float rpm = 0;
@@ -18,7 +26,7 @@ float readRPM(int rPin) {
       int rpmtmp = (60 * 1000000) / (float)diff;
       if(rpmtmp < 1000) {
         //Serial.println(rpmtmp);
-        rpm = rpmtmp;
+        rpm = rpmtmp;git
         return rpm;
       }
     }
@@ -33,6 +41,8 @@ void setup() {
 	pinMode(speedpin, OUTPUT);
 	pinMode(rpmPin, INPUT);
 	Serial.begin(9600);
+  
+  analogWrite(speedpin, speed);
 }
 
 void loop() {
@@ -47,6 +57,25 @@ void loop() {
 		int v = Serial.parseInt();
     Serial.print("Set speed to ");
     Serial.println(v);
-    analogWrite(speedpin, v);
+    speed = v;
+    analogWrite(speedpin, speed);
 	}
+
+  long cMillis = millis();
+  if(doAutoAdjust && cMillis > lastAutoAdjust + autoAdjustSpace && cMillis > autoAdjustStart) {
+    lastAutoAdjust = cMillis;
+
+    if(avgRpm - setRpmBuffer > setRpm) {
+      speed -= setRpmChangeVoltage;
+      Serial.print("Adjusted to ");
+      Serial.println(speed);
+      analogWrite(speedpin, speed);
+    }
+    if(avgRpm + setRpmBuffer < setRpm) {
+      speed += setRpmChangeVoltage;
+      Serial.print("Adjusted to ");
+      Serial.println(speed);
+      analogWrite(speedpin, speed);
+    }
+  }
 }
