@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="highcharts.js"></script> <!-- The chart plot library -->
+  <title>Gravity Gardens SHM</title>
+</head>
+<body>
+
+	<div id="header">
+		<div class="container">
+			<h1>Gravity Gardens SHM</h1>
+		</div>
+	</div>
+	<div class="container-input">
+<!-- https://randomnerdtutorials.com/esp32-esp8266-input-data-html-form refer to this  -->
+		<form action="/get" method="GET">
+			<div class="form-row">
+				<label for="input1">Experiment Name:</label>
+				<input type="text" id="input1" name="input1">
+			</div>
+			<div class="form-row">
+				<label for="input2">Motor Speed (g):</label>
+				<input type="text" id="input2" name="input2">
+			</div>
+			<div class="form-row">
+				<label for="input3">Time (days):</label>
+				<input type="text" id="input3" name="input3">
+			</div>
+			<div class="form-row">
+				<label for="input4">Light Timer:</label>
+				<input type="text" id="input4" name="input4">
+			</div>
+			<div class="form-row">
+				<label for="input5">Description:</label>
+				<input type="textarea" id="input5" name="input5" rows="4" cols="50">
+			</div>
+            <input type="submit" value="Start">
+			<!-- after clicking the button, it should confirm whether the data submitted is received or not
+			like adding a green text "Settings Submitted!" and red text "Settings failed to upload!" maybe-->
+        </form>
+		<div class="progress-container">
+			<h3>Cycle Progress</h3>
+			<progress id="progressBar" value="50" max="100"></progress><br>
+			<button id="normal-button" onclick="increaseProgress()">Continue</button>
+			<button id="normal-button" onclick="decreaseProgress()">Pause</button>
+			<button id="special-button" onclick="stopProgress()">Stop</button>
+		<!-- after clicking the button, it should say the state that it is in (paused, stopped, running)-->
+    </div>
+	</div>
+	
+  </div>
+  
+  
+	</div>
+  <div class="container">
+	  <div id="chart-temperature"></div>
+	  <div id="chart-humidity"></div>
+  </div>
+  <div class="container">
+		<div id="chart-accel"></div>
+  </div>
+	
+  <script src="script.js"></script>
+</body>
+</html>
