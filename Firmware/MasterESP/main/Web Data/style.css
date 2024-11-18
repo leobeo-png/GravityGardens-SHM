@@ -3,10 +3,13 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: #333;
       background-color: #f4f4f9;
-      text-align: center;
+    }
+	h3 {
+      margin: 0;
+      font-size: 1.2rem;
     }
     #header {
-      background-color: #2c3e50;
+      background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(2,2,99,1) 100%, rgba(0,90,108,1) 100%);
       color: #ecf0f1;
       padding: 1rem;
       position: relative;
@@ -22,20 +25,31 @@
 	  justify-content: left;
 	  padding: 1rem;
 	}
-	
 	.container {
 	  display: grid;
-	  grid-template-columns: repeat(2, 49%); /* 2 columns for sensors inside */
+	  grid-template-columns: repeat(3, 33%); /* 2 columns for sensors inside */
 	  gap:10px;
 	  margin: 10px 10px 10px 10px;
 	}
 	
 	.container-input {
 	  display: grid;
-	  grid-template-columns: repeat(2, 40%); /* 2 columns for sensors inside */
+	  grid-template-columns: repeat(3, 50%); /* 2 columns for sensors inside */
 	  margin: 10px 10px 10px 10px;
+	  gap:20px;
+	  width:90%;
 	}
 	
+	.logo-container {
+		display: flex;
+		align-items: center;
+	}
+	
+	.logo {
+		width:100px;
+		height:100px;
+		padding: 5px 40px 5px 5px;
+	}
     .card {
       background-color: #fff;
       padding: 20px;
@@ -48,43 +62,12 @@
       transform: scale(1.05);
       box-shadow: 0 6px 12px rgba(0,0,0,0.15);
     }
-    .temperature { color: #e67e22; }
-    .humidity { color: #3498db; }
-	.accelerometer1 { color: #207ea1 }
-	.accelerometer2 { color: #035563 }
-    .reading { font-size: 2rem; }
-    h3 {
-      margin: 0;
-      font-size: 1.2rem;
-    }
 
-	#chart-humidity, #chart-temperature, #chart-accel{
+	#chart-combined, #chart-rpm, #chart-accel{
 	  border-radius: 3px;
 	  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 	}
-
-	input[type="text"] {
-            flex: 1;
-            padding: 5px;
-			margin-left:10px;
-        }
-		
-	input[type="textarea"] {
-		flex: 1;
-		width:50px;
-		height:60px;
-		margin-left:10px;
-	}
 	
-	a:link, a:visited {
-	  background-color: #2b4982;
-	  color: white;
-	  padding: 15px 25px;
-	  text-align: center;
-	  text-decoration: none;
-	  display: inline-block;
-	  border-radius: 10px;
-	}
 
 	a:hover, a:active {
 	  background-color: #295ec2;
@@ -101,14 +84,27 @@
         width: 100%;
         margin-bottom: 10px;
     }
+
+		
+	input[type="textarea"] {
+		flex: 1;
+		width:50px;
+		height:60px;
+		margin-left:10px;
+		border: 1px solid #ccc;
+		border-radius: 3px;
+	}
 	
 	input[type="text"] {
-            padding: 8px;
+			flex: 1;
+            padding: 5px;
+			margin-left:10px;
+            padding: 3px;
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 4px;
-			
         }
+		
     input[type="submit"] {
             background-color: #2c3e50;
             color: white;
@@ -117,7 +113,7 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-			max-width: fit-content;
+			max-width: 20%;
 			margin-left: auto;
 			margin-right: auto;
         }
@@ -131,6 +127,14 @@
 		margin-bottom: 10px;
     }
 		
+	#progress-info {
+		font-size: 16px;
+		margin-top: 10px;
+	}
+		
+	#logs {
+		width:fit-content;
+	}
 	#normal-button {
 		width:fit-content;
 		background-color: #2c3e50;
@@ -159,4 +163,33 @@
 	
 	#special-button:hover {
 		background-color: #ff2635;
+	}
+	
+	#view-log {
+		width:fit-content;
+		background-color: #2c3e50;
+        color: white;
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+	}
+	
+	#view-log:hover {
+		background-color: #295ec2;
+	}
+	
+	#statusMessage {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		width: 70%;
+	}
+	
+	#rpm-calc {
+		margin-left: auto;
+		margin-right:auto;
+		margin-bottom:10px; 
+		padding-left: 10px;
 	}

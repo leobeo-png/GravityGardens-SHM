@@ -1,12 +1,37 @@
-var chartT = new Highcharts.Chart({
-  chart:{
-    renderTo:'chart-temperature'
+var chartTH = new Highcharts.Chart({
+  chart: {
+    renderTo: 'chart-combined'
   },
+  title: {
+    text: undefined
+  },
+  xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: [{ // Primary yAxis for Temperature
+    title: {
+      text: 'Temperature (°C)'
+    },
+    labels: {
+      format: '{value}°C'
+    },
+    opposite: false
+  }, { // Secondary yAxis for Humidity
+    title: {
+      text: 'Humidity (%)'
+    },
+    labels: {
+      format: '{value}%'
+    },
+    opposite: true
+  }],
   series: [
     {
       name: 'Temperature #1',
       type: 'line',
       color: '#101D42',
+      yAxis: 0, // Link to the first yAxis (Temperature)
       marker: {
         symbol: 'circle',
         radius: 3,
@@ -17,30 +42,42 @@ var chartT = new Highcharts.Chart({
       name: 'Temperature #2',
       type: 'line',
       color: '#00A6A6',
+      yAxis: 0, // Link to the first yAxis (Temperature)
       marker: {
         symbol: 'square',
         radius: 3,
         fillColor: '#00A6A6',
       }
     },
-	
-  ],
-  title: {
-    text: undefined
-  },
-  xAxis: {
-    type: 'datetime',
-    dateTimeLabelFormats: { second: '%H:%M:%S' }
-  },
-  yAxis: {
-    title: {
-      text: 'Temperature Celsius Degrees'
+    {
+      name: 'Humidity #1',
+      type: 'line',
+      color: '#4CAF50',
+      yAxis: 1, // Link to the second yAxis (Humidity)
+      marker: {
+        symbol: 'circle',
+        radius: 3,
+        fillColor: '#4CAF50',
+      }
+    },
+    {
+      name: 'Humidity #2',
+      type: 'line',
+      color: '#FF9800',
+      yAxis: 1, // Link to the second yAxis (Humidity)
+      marker: {
+        symbol: 'square',
+        radius: 3,
+        fillColor: '#FF9800',
+      }
     }
-  },
+  ],
   credits: {
     enabled: false
   }
 });
+
+// Function to fetch temperature data and update the chart
 function fetchTemperatureData(sensorId) {
   setInterval(function () {
     var xhttp = new XMLHttpRequest();
@@ -48,69 +85,21 @@ function fetchTemperatureData(sensorId) {
       if (this.readyState == 4 && this.status == 200) {
         var x = (new Date()).getTime(),
             temperature = parseFloat(this.responseText); // Parse temperature value from response
-        
-        // Update the corresponding temperature card
-        document.getElementById("temperature" + sensorId).innerHTML = temperature + " °C";
-        
-        // Add point to the temperature chart and limit to 40 points
-        if (chartT.series[sensorId - 1].data.length > 1000) {
-          chartT.series[sensorId - 1].addPoint([x, temperature], true, true, true);
+
+        // Add point to the temperature series and limit to 1000 points
+        if (chartTH.series[sensorId - 1].data.length > 1000) {
+          chartTH.series[sensorId - 1].addPoint([x, temperature], true, true, true);
         } else {
-          chartT.series[sensorId - 1].addPoint([x, temperature], true, false, true);
+          chartTH.series[sensorId - 1].addPoint([x, temperature], true, false, true);
         }
       }
     };
     xhttp.open("GET", "/temperature" + sensorId, true); // Fetch temperature data for the given sensor
     xhttp.send();
-  }, 10000); // 4-second interval for temperature updates
+  }, 10000); // 10-second interval for temperature updates
 }
 
-var chartH = new Highcharts.Chart({
-  chart:{
-    renderTo:'chart-humidity'
-  },
-  series: [
-    {
-      name: 'Humidity #1',
-      type: 'line',
-      color: '#101D42',
-      marker: {
-        symbol: 'circle',
-        radius: 3,
-        fillColor: '#101D42',
-      }
-    },
-    {
-      name: 'Humidity #2',
-      type: 'line',
-      color: '#00A6A6',
-      marker: {
-        symbol: 'square',
-        radius: 3,
-        fillColor: '#00A6A6',
-      }
-    },
-  ],
-  title: {
-    text: undefined
-  },
-  xAxis: {
-    type: 'datetime',
-    dateTimeLabelFormats: { second: '%H:%M:%S' }
-  },
-  yAxis: {
-    title: {
-      text: 'Humidity Percentage'
-    }
-  },
-  credits: {
-    enabled: false
-  }
-});
-// Function to fetch temperature data and update the temperature chart
-
-
-// Function to fetch humidity data and update the humidity chart
+// Function to fetch humidity data and update the chart
 function fetchHumidityData(sensorId) {
   setInterval(function () {
     var xhttp = new XMLHttpRequest();
@@ -118,22 +107,20 @@ function fetchHumidityData(sensorId) {
       if (this.readyState == 4 && this.status == 200) {
         var x = (new Date()).getTime(),
             humidity = parseFloat(this.responseText); // Parse humidity value from response
-        
-        // Update the corresponding humidity card
-        document.getElementById("humidity" + sensorId).innerHTML = humidity + " %";
-        
-        // Add point to the humidity chart and limit to 40 points
-        if (chartH.series[sensorId - 1].data.length > 1000) {
-          chartH.series[sensorId - 1].addPoint([x, humidity], true, true, true);
+
+        // Add point to the humidity series and limit to 500 points
+        if (chartTH.series[sensorId + 1].data.length > 500) {
+          chartTH.series[sensorId + 1].addPoint([x, humidity], true, true, true);
         } else {
-          chartH.series[sensorId - 1].addPoint([x, humidity], true, false, true);
+          chartTH.series[sensorId + 1].addPoint([x, humidity], true, false, true);
         }
       }
     };
     xhttp.open("GET", "/humidity" + sensorId, true); // Fetch humidity data for the given sensor
     xhttp.send();
-  }, 10000); // 4-second interval for humidity updates
+  }, 10000); // 10-second interval for humidity updates
 }
+
 
 var chartA = new Highcharts.Chart({
   chart:{
@@ -224,12 +211,8 @@ function fetchAccelData(sensorId) {
     xhttp.onreadystatechange = function () {
       if (this.readyState == 4 && this.status == 200) {
         var x = (new Date()).getTime(),
-            accel = parseFloat(this.responseText); // Parse humidity value from response
+            accel = parseFloat(this.responseText);  // Parse
         
-        // Update the corresponding humidity card
-        document.getElementById("accel" + sensorId).innerHTML = accel;
-        
-        // Add point to the humidity chart and limit to 40 points
         if (chartA.series[sensorId - 1].data.length > 1000) {
           chartA.series[sensorId - 1].addPoint([x, accel], true, true, true);
         } else {
@@ -237,35 +220,209 @@ function fetchAccelData(sensorId) {
         }
       }
     };
-    xhttp.open("GET", "/accel" + sensorId, true); // Fetch humidity data for the given sensor
+    xhttp.open("GET", "/accel" + sensorId, true); // Fetch data for the given sensor
     xhttp.send();
-  }, 300); 
+  }, 300); //300ms 
 }
 
-// Call fetchTemperatureData and fetchHumidityData for all sensors
-// Change the "<=" to the number of sensors
-for (let i = 1; i <= 6; i++) {
+var chartR = new Highcharts.Chart({
+  chart:{
+    renderTo:'chart-rpm'
+  },
+  series: [
+    {
+      name: 'RPM',
+      type: 'line',
+      color: '#101D42',
+      marker: {
+        symbol: 'triangle',
+        radius: 3,
+        fillColor: '#101D42',
+      }
+    },
+  ],
+  title: {
+    text: undefined
+  },
+  xAxis: {
+    type: 'datetime',
+    dateTimeLabelFormats: { second: '%H:%M:%S' }
+  },
+  yAxis: {
+    title: {
+      text: 'RPM Speed'
+    }
+  },
+  credits: {
+    enabled: false
+  }
+});
+
+function fetchRPMData() {
+  setInterval(function () {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        var x = (new Date()).getTime(),
+            rpm = parseFloat(this.responseText);  // Parse
+        
+        if (chartR.series[0].data.length > 1000) {
+          chartR.series[0].addPoint([x, rpm], true, true, true);
+        } else {
+          chartR.series[0].addPoint([x, rpm], true, false, true);
+        }
+      }
+    };
+    xhttp.open("GET", "/rpm" + sensorId, true); // Fetch data for the given sensor
+    xhttp.send();
+  }, 1000); // 1 second interval 
+}
+
+for (let i = 1; i <= 2; i++) {
   fetchTemperatureData(i);  
   fetchHumidityData(i); 
   fetchAccelData(i);
 }
+		//global variables
+		let timeRemaining;
+		let countdownInterval;
+		
+		inputTime = document.getElementById("input3");
+		progressBar = document.getElementById("progressBar");
+        statusText = document.getElementById("status-text");
+        timeRemainingElement = document.getElementById("time-remaining");
+		
+document.getElementById('settingsForm').addEventListener('submit', function(event) {
+	
+//----------------------------Sending Inputs-------------------------------------
+            event.preventDefault(); // Prevent the default form submission
 
+            // Get form data
+            const formData = new FormData(this);
+            const params = new URLSearchParams(formData);
 
-function increaseProgress() {
-            const progressBar = document.getElementById("progressBar");
-            if (progressBar.value <= progressBar.max) {
-                progressBar.value += 10;
-            }
-        }
-function decreaseProgress() {
+            // Send GET request to the server
+            fetch(`/get?${params.toString()}`) // Fine for now, maybe chagne later to fit with the RPi
+                .then(response => response.json())
+                .then(data => {
+                    const statusMessage = document.getElementById('statusMessage');
+                    if (data.status === "success") {
+                        statusMessage.textContent = data.message;
+                        statusMessage.className = "success";
+						// StartTimer(); // Start timer when the data is successfully sent to the Server
+						/*const experimentNameT = document.getElementById("input1").value;
+						const experimentNameElement = document.getElementById("experiment-name");
+						experimentNameElement.textContent = experimentNameT;	*/
+                    } else {
+                        statusMessage.textContent = data.message;
+                        statusMessage.className = "error";
+                    }
+                })
+                .catch(error => {
+                    const statusMessage = document.getElementById('statusMessage');
+                    statusMessage.textContent = "An error occurred. Please try again.";
+                    statusMessage.className = "error";
+					//return; // Breaking the function
+                });
+				
+				StartTimer(); // temporary start
+			const experimentNameT = document.getElementById("input1").value;
+			const experimentNameElement = document.getElementById("experiment-name");
+			experimentNameElement.textContent = experimentNameT;
+});
+
+document.getElementById("input2").addEventListener('input', (e) => { // Calculate the RPM based on the G's
+	document.getElementById("rpm-calc").innerHTML = `RPM = ${e.target.value * 10}`; // change this to the actual formula
+});
+
+function StartTimer() {
+			const inputTime = document.getElementById("input3").value; // To constanly update the Value
 			const progressBar = document.getElementById("progressBar");
-            if (progressBar.value <= progressBar.max) {
-                progressBar.value -= 10;
+			const statusText = document.getElementById("status-text");
+			const timeRemainingElement = document.getElementById("time-remaining");
+			
+            if (!inputTime || isNaN(inputTime) || inputTime <= 0) {
+                alert("Please enter a valid time (in minutes).");
+                return;
             }
+
+            // Clear any existing countdown
+            if (countdownInterval) clearInterval(countdownInterval);
+			
+			
+			const totalTime = inputTime * 60;
+			timeRemaining = totalTime; // sets the time remaining variable
+			progressBar.max = totalTime; // initializes the progress bar
+			progressBar.value = totalTime;
+			statusText.textContent = "Running";
+			
+            // Start the countdown
+            countdownInterval = setInterval(() => {
+                if (timeRemaining <= 0) {
+                    clearInterval(countdownInterval);
+                    statusText.textContent = "Completed";
+                    timeRemainingElement.textContent = "00:00";
+                    alert("Time is up!");
+					
+					// send POST to the RPi to send serial command to ESP32
+                } else {
+                    timeRemaining--;
+
+					// Calculate hours, minutes, and seconds
+					const hours = Math.floor(timeRemaining / 3600);
+					const minutes = Math.floor((timeRemaining % 3600) / 60);
+					const seconds = timeRemaining % 60;
+
+					// Format the time based on whether hours are needed
+					const formattedTime = 
+						hours > 0 
+						? `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+						: `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+					// Update the display
+					timeRemainingElement.textContent = formattedTime;
+					progressBar.value = timeRemaining;
+                }
+		}, 1000);
+}
+
+function ContinueProgress() {
+	// Send POST to RUN
+			statusText.textContent = "Running";
+			countdownInterval = setInterval(() => { // same as starting
+                if (timeRemaining <= 0) {
+                    clearInterval(countdownInterval);
+                    statusText.textContent = "Completed";
+                    timeRemainingElement.textContent = "00:00";
+                    alert("Time is up!");
+                } else {
+                    timeRemaining--;
+					const hours = Math.floor(timeRemaining / 3600);
+					const minutes = Math.floor((timeRemaining % 3600) / 60);
+					const seconds = timeRemaining % 60;
+					
+					const formattedTime = 
+						hours > 0 
+						? `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+						: `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+					timeRemainingElement.textContent = formattedTime;
+					progressBar.value = timeRemaining;
+					}
+		}, 1000);
+    }
+function PauseProgress() {
+			statusText.textContent = "Paused";
+			clearInterval(countdownInterval);
+			// Send POST to STOP
         }
 function stopProgress() {
-			const progressBar = document.getElementById("progressBar");
-            if (progressBar.value <= progressBar.max) {
-                progressBar.value -=100;
-            }
+			clearInterval(countdownInterval);
+            statusText.textContent = "Stopped";
+            timeRemainingElement.textContent = "00:00";
+			progressBar.value = 0;
+			input3.value = ""; 
+			
+			// Send POST to STOP and save the Logs into the database
+			// have a confirmation to stop or not (or was it to save or trash the result)
         }
