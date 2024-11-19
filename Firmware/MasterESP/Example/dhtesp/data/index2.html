@@ -22,7 +22,33 @@
 		<span class="slider"></span>
 		</label>
 	</div>
+	<div class="container"> <!-- https://randomnerdtutorials.com/esp32-esp8266-input-data-html-form refer to this  -->
+		<form action="/get" method="GET">
+            <label for="input1">Time (days):</label>
+            <input type="text" id="input1" name="input1">
+
+            <label for="input2">Motor Speed (g):</label>
+            <input type="text" id="input2" name="input2">
+
+            <label for="input3">Something:</label>
+            <input type="text" id="input3" name="input3">
+
+            <input type="submit" value="Submit">
+			<!-- after clicking the button, it should confirm whether the data submitted is received or not
+			like adding a green text "Settings Submitted!" and red text "Settings failed to upload!" maybe-->
+        </form>
+	</div>
+	
   </div>
+  
+  <div class="progress-container">
+        <h3>Cycle Progress</h3>
+        <progress id="progressBar" value="50" max="100"></progress><br>
+        <button id="normal-button" onclick="increaseProgress()">Continue</button>
+		<button id="normal-button" onclick="decreaseProgress()">Pause</button>
+		<button id="special-button" onclick="stopProgress()">Stop</button>
+		<!-- after clicking the button, it should say the state that it is in (paused, stopped, running)-->
+    </div>
   <script src="script2.js"></script>
 </body>
 </html>
