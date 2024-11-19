@@ -46,17 +46,17 @@ CREATE TABLE sensorLogs (
 );
 
 DROP TABLE IF EXISTS speedsensorLogs;
-CREATE TABLE speedsensorLogs (
-	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-	sensornumber INT NOT NULL,
-	recordtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	axis_x FLOAT,
-	axis_y FLOAT,
-	axis_z FLOAT,
-	gyro_x FLOAT,
-	gyro_y FLOAT,
-	gyro_z FLOAT
-);
+-- CREATE TABLE speedsensorLogs (
+--	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+--	sensornumber INT NOT NULL,
+--	recordtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--	axis_x FLOAT,
+--	axis_y FLOAT,
+--	axis_z FLOAT,
+--	gyro_x FLOAT,
+--	gyro_y FLOAT,
+--	gyro_z FLOAT
+-- );
 
 DROP TABLE IF EXISTS experimentsettings;
 CREATE TABLE experimentsettings (
