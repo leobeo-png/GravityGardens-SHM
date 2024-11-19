@@ -1,7 +1,11 @@
 const express = require("express");
 const http = require("http");
+const { Server } = require("socket.io");
+
 const app = express();
 const server = http.createServer(app);
+const io = new Server(server);
+
 const bodyparser = require("body-parser");
 
 const sqlman = require("./sqlman");
@@ -9,7 +13,7 @@ const serialman = require("./serialman");
 
 const port = 8000;
 
-app.use(bodyparser.URLUnencoded({extended: false}));
+app.use(bodyparser.urlencoded({extended: false}));
 app.use(express.static("static"));
 
 app.get("/", (req, res) => {
