@@ -20,12 +20,12 @@
     <form id="settingsForm">
         <div class="form-row">
             <label for="input1">Experiment Name:</label>
-            <input type="text" id="input1" name="input1">
+            <input type="text" id="input1" name="input1" placeholder="Name">
         </div>
         <div class="form-row">
             <label for="input2">Motor Speed (g):</label>
-            <input type="text" id="input2" name="input2">
-            <p id="rpm-calc">RPM = 0</p>
+            <input type="text" id="input2" name="input2" placeholder="e.g. 10" min="1" required>
+            <span id="rpm-calc">RPM = 0</span>
         </div>
         <div class="form-row">
             <label for="input3">Time (Minutes):</label> <!-- How specific do we want the time-set (Hours, minutes?) -->
@@ -41,7 +41,7 @@
         </div>
         <div class="form-row">
             <label for="input6">Description:</label>
-            <input type="textarea" id="input6" name="input6">
+            <textarea  id="input6" name="input6" rows="4" cols="50" placeholder="Experiment description"></textarea>
         </div>
         <input type="submit" value="Start">
         <!-- after clicking the button, it should confirm whether the data submitted is received or not

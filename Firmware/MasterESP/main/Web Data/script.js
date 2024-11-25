@@ -293,6 +293,8 @@ inputTime = document.getElementById("input3");
 progressBar = document.getElementById("progressBar");
 statusText = document.getElementById("status-text");
 timeRemainingElement = document.getElementById("time-remaining");
+normalButton = document.getElementById("normal-button");
+specialButton = document.getElementById("special-button");
 
 document.getElementById('settingsForm').addEventListener('submit', function (event) {
   if (confirm("Start the machine with the current settings?") == true) {
@@ -341,13 +343,13 @@ document.getElementById("input2").addEventListener('input', (e) => { // Calculat
 });
 
 function gforceToRPM(gForce) {
-  const radius = 50; // Centimeters
+  const radius = 50; // Centimeters assuming...
 
   const constant = 1.118 * Math.pow(10, -5);
 
   const rpm = Math.sqrt(gForce / (constant * radius));
 
-  return rpm.toFixed(2);
+  return rpm.toFixed(2); // 
 }
 
 function StartTimer() { // for the whole machine time
@@ -438,6 +440,8 @@ function stopProgress() {
     timeRemainingElement.textContent = "00:00";
     progressBar.value = 0;
     input3.value = "";
+    normalButton.disabled = true;
+    specialButton.disabled = true;
 
     // Send POST to STOP and save the Logs into the database
     // have a confirmation to stop or not (or was it to save or trash the result)
