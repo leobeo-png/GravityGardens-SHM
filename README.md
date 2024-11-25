@@ -10,7 +10,7 @@ Although, this idea fell through with some complications such as Wi-Fi connectio
 
 The current implementation involves an ESP32 with the sensors outside the contraption. It will communicate with the Raspberry Pi with a USB cable using Serial. The Raspberry Pi will handle the webserver, database and sending commands to the ESP32. 
 
-
+![System Architecture](https://github.com/leobeo-png/GravityGardens-SHM/blob/SerialMain/Documentation/images/Broad_Overview_Design&Connections.drawio(2).png?raw=true)
 
 # Components
 - CHT8305 Temperature and Humidity Sensor I2C
