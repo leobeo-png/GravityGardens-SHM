@@ -6,7 +6,7 @@ _project_dir="./shm"
 sudo apt update -y && sudo apt upgrade -y
 
 # Install nodejs, SQL
-sudo apt install network-manager  nodejs npm mariadb-server net git gh -y
+sudo apt install network-manager nodejs npm mariadb-server git gh -y
 
 # create a new access point connection
 sudo nmcli c add type wifi ifname "wlan0" con-name "wifihost2" ssid "GG-SMH" wifi.mode "ap" wifi-sec.key-mgmt "wpa-psk" wifi-sec.psk "GravityGardens!" ipv4.method "shared" ipv4.ignore-auto-dns "yes" ipv4.may-fail "no" ipv6.method "disabled" 802-11-wireless.powersave 2
