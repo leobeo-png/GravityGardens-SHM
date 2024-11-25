@@ -34,6 +34,7 @@ h3 {
     grid-template-columns: repeat(3, 33%); /* 2 columns for sensors inside */
     gap: 10px;
     margin: 10px 10px 10px 10px;
+	
 }
 
 .container-input {
@@ -146,18 +147,6 @@ progress {
     border-radius: 10px;
 }
 
-progress::-webkit-progress-bar {
-    background-color: #eee; /* Bar's background for WebKit browsers */
-}
-
-progress::-webkit-progress-value {
-    background-color: #38b6ff; /* Progress fill color for WebKit browsers */
-    border-radius: 10px; /* Rounded corners for the fill */
-}
-
-progress::-moz-progress-bar {
-    background-color: #38b6ff; /* Progress fill color for Firefox */
-}
 
 #progress-info {
     font-size: 16px;
@@ -166,6 +155,7 @@ progress::-moz-progress-bar {
 
 #logs {
     width: fit-content;
+	height: fit-content;
 }
 
 .normal-button {
@@ -217,7 +207,9 @@ progress::-moz-progress-bar {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 70%;
+    width: fit-content;
+	height: fit-content;
+
 }
 
 #rpm-calc {
@@ -225,4 +217,56 @@ progress::-moz-progress-bar {
     margin-right: auto;
     margin-bottom: 10px;
     padding-left: 10px;
+}
+
+/* pop-up background */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+/* content style */
+.modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* close button */
+.close {
+  float: right;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: red;
+}
+
+table {
+	border-collapse: collapse;
+	width:100%;
+}
+
+td, th {
+	border: 1px solid #dddddd;
+	text-align:left;
+	padding:8px;
+}
+
+.table-container {
+	max-height: 500px; 
+	overflow-y: auto;
 }

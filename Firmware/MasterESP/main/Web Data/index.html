@@ -16,7 +16,7 @@
     </div>
 </div>
 <div class="container-input">
-    <!-- https://randomnerdtutorials.com/esp32-esp8266-input-data-html-form refer to this  -->
+    <!-- Add a List of past expriments as presets / saved settings to look back to  -->
     <form id="settingsForm">
         <div class="form-row">
             <label for="input1">Experiment Name:</label>
@@ -64,11 +64,38 @@
         <button id="special-button" onclick="stopProgress()">Stop</button>
         <!-- after clicking the button, it should say the state that it is in (paused, stopped, running)-->
     </div>
-    <div id="logs">
-        <button id="view-log">View Logs</button>
-    </div>
-</div>
+	
+	<div id="logs">
+		<button id="view-log">View Logs</button>
+	</div>
+	
 <div id="statusMessage"></div>
+<!-- Floating window -->
+	<div id="modal" class="modal">
+		<div class="modal-content">
+		<span class="close">&times;</span> <!-- this is the X to close -->
+			<h2>Logs</h2>
+			<div class="table-container">
+				<table>
+				<thead>
+					<tr>
+						<th>Experiment Name</th>
+						<th>Motor G</th>
+						<th>Time Started</th> <!-- should it receive the time stamp of starting and stopping -->
+						<th>Time Ended</th>
+						<th>Description</th>
+						<th>Download XLSX</th>
+					</tr>
+				</thead>
+				<tbody id="experiment-content"> <!-- Dynamic table insert from the javascript -->
+					
+				</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<!--seperate div-->
 
 <div class="container">
     <div id="chart-combined"></div>

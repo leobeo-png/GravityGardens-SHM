@@ -285,6 +285,8 @@ for (let i = 1; i <= 2; i++) {
     fetchRPMData();
 }
 
+
+
 //global variables
 let timeRemaining;
 let countdownInterval;
@@ -343,13 +345,13 @@ document.getElementById("input2").addEventListener('input', (e) => { // Calculat
 });
 
 function gforceToRPM(gForce) {
-  const radius = 50; // Centimeters assuming...
+  const radius = 25.1; // Centimeters
 
   const constant = 1.118 * Math.pow(10, -5);
 
   const rpm = Math.sqrt(gForce / (constant * radius));
 
-  return rpm.toFixed(2); // 
+  return rpm.toFixed(2); // fix it to 2 decimal points
 }
 
 function StartTimer() { // for the whole machine time
@@ -446,3 +448,59 @@ function stopProgress() {
     // Send POST to STOP and save the Logs into the database
     // have a confirmation to stop or not (or was it to save or trash the result)
 }
+
+//------------------------------------------Log Window---------------------------------------------------------//
+
+const openModal = document.getElementById('view-log');
+const modal = document.getElementById('modal');
+const closeModal = document.querySelector('.close');
+const experimentContent = document.getElementById('experiment-content');
+
+// Just a prototype right now
+// Change this contents to the database data?
+const logExperiments = [ 
+	{ name: "Experiment #1", G: 10, startTime: "10:00 AM", endTime: "8:00 PM", desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #2", G: 13, startTime: "12:00 AM", endTime: "10:00 PM", desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #3", G: 15, startTime: "11:00 AM", endTime: "9:00 PM",  desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #4", G: 15, startTime: "11:00 AM", endTime: "9:00 PM",  desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #5", G: 15, startTime: "11:00 AM", endTime: "9:00 PM",  desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #6", G: 15, startTime: "11:00 AM", endTime: "9:00 PM",  desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #7", G: 15, startTime: "11:00 AM", endTime: "9:00 PM",  desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #8", G: 15, startTime: "11:00 AM", endTime: "9:00 PM",  desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+];
+
+function populateGrid(data) {
+	experimentContent.innerHTML = "";
+	data.forEach((experiment) => { // data is converted to an object (experiment)
+		experimentContent.innerHTML += 
+		`
+		<tr>
+		<td>${experiment.name}</td>
+		<td>${experiment.G}</td>
+		<td>${experiment.startTime}</td>
+		<td>${experiment.endTime}</td>
+		<td>${experiment.desc}</td>
+		<td>
+			<button class="normal-button" onclick="download-xml">Download</button> 
+		</td>
+		</tr>
+		`; // download button linked to another function to download according to the experiment number?
+	});
+}
+
+
+
+openModal.addEventListener('click', () => {
+	populateGrid(logExperiments);
+	modal.style.display = 'block';
+});
+
+closeModal.addEventListener('click', () => {
+	modal.style.display = 'none';
+});
+
+window.addEventListener('click', (event) => {
+	if (event.target === modal) {
+		modal.style.display = 'none';
+	}
+});
