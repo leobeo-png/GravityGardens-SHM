@@ -19,7 +19,7 @@
 </div>
 <div class="container-input">
     <!-- https://randomnerdtutorials.com/esp32-esp8266-input-data-html-form refer to this  -->
-    <form id="settingsForm">
+    <form id="settingsForm" action="/start" method="post">
         <div class="form-row">
             <label for="input1">Experiment Name:</label>
             <input type="text" id="input1" name="input1">
@@ -46,6 +46,7 @@
             <input type="textarea" id="input6" name="input6">
         </div>
         <input type="submit" value="Start">
+        <a href="/reset">Reset</a>
         <!-- after clicking the button, it should confirm whether the data submitted is received or not
         like adding a green text "Settings Submitted!" and red text "Settings failed to upload!" maybe-->
     </form>
@@ -55,6 +56,7 @@
         <div id="progress-info">
             <p>Experiment Name: <span id="experiment-name">--</span></p>
             <p>Status: <span id="status-text">Stopped</span></p>
+            <p>Experiment end: <span id="experiment-end">00:00</span></p>
             <p>Time Remaining: <span id="time-remaining">00:00</span></p>
             <p>Lights ON: <span id="time-remaining-on">00:00</span></p>
             <p>Lights OFF: <span id="time-remaining-off">00:00</span></p>

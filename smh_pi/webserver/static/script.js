@@ -279,10 +279,10 @@ function fetchRPMData() {
 }
 
 for (let i = 1; i <= 2; i++) {
-    fetchTemperatureData(i);
-    fetchHumidityData(i);
-    fetchAccelData(i);
-    fetchRPMData();
+    // fetchTemperatureData(i);
+    // fetchHumidityData(i);
+    // fetchAccelData(i);
+    // fetchRPMData();
 }
 
 //global variables
@@ -294,6 +294,7 @@ progressBar = document.getElementById("progressBar");
 statusText = document.getElementById("status-text");
 timeRemainingElement = document.getElementById("time-remaining");
 
+/*
 document.getElementById('settingsForm').addEventListener('submit', function (event) {
   if (confirm("Start the machine with the current settings?") == true) {
     //----------------------------Sending Inputs-------------------------------------
@@ -314,7 +315,7 @@ document.getElementById('settingsForm').addEventListener('submit', function (eve
             // StartTimer(); // Start timer when the data is successfully sent to the Server
             /*const experimentNameT = document.getElementById("input1").value;
             const experimentNameElement = document.getElementById("experiment-name");
-            experimentNameElement.textContent = experimentNameT;	*/
+            experimentNameElement.textContent = experimentNameT;	*//*
           } else {
             statusMessage.textContent = data.message;
             statusMessage.className = "error";
@@ -334,7 +335,7 @@ document.getElementById('settingsForm').addEventListener('submit', function (eve
   } else {
     event.preventDefault();
   }
-});
+}); */
 // Change RPM calc based on input
 document.getElementById("input2").addEventListener('input', (e) => { // Calculate the RPM based on the G's
     document.getElementById("rpm-calc").innerHTML = `RPM = ${gforceToRPM(e.target.value)}`; // change this to the actual formula
