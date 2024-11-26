@@ -457,48 +457,7 @@ window.addEventListener('click', (event) => {
 	}
 });
 
-//-------------------------------------------Select Dropdown-------------------------------------//
-const selectOptions = [ // change this to the actual database information
-{ input1: "Test 1", input2: 11, input3: "3600", input4: "2400", input5: "800", input6: "This experiment is a yeah nah attempt" },
-{ input1: "do you know the way?", input2: 12, input3: "7200", input4: "2800", input5: "600", input6: "bruh" },
-{ input1: "Testing different lenghts", input2: 13, input3: "4800", input4: "3000", input5: "1200", input6: "yeah nah nah yeah" },
-{ input1: "wkwkwkwkw", input2: 14, input3: "1600", input4: "4400", input5: "400", input6: "floccinaucinihilipfication" },
-{ input1: "h", input2: 15, input3: "9000", input4: "800", input5: "2400", input6: "permisi bang, ini ada yang mau pulang krna udh nyerah katanya." },
-]
 
-const select = document.getElementById("dynamic-select");
-
-// Default position wiht nothing inside
-const defaultOption = document.createElement("option");
-defaultOption.value = "";
-defaultOption.textContent = "Select Previous Runs";
-defaultOption.selected = true;
-select.appendChild(defaultOption);
-
-// dynamically create items in the select dropdown depending on the array
-selectOptions.forEach(item => {
-	const option = document.createElement("option");
-	option.value = item.input1;
-	option.textContent = item.input1;
-	select.appendChild(option);
-});
-
-select.addEventListener("change", () => {
-	const selected = selectOptions.find(item => item.input1 === select.value);
-
-	// selected only checks if the value is the same as the item
-	// if it's not then it should go to the default and clear all the input text
-	if (!selected)
-		["input1", "input2", "input3", "input4", "input5", "input6"].forEach(key => {
-			const input = document.getElementById(key);
-			if (input) input.value = "";
-	});
-	// this is to fill the input text from the array
-	Object.entries(selected).forEach(([key, value]) => {
-			const input = document.getElementById(key);
-			if (input) input.value = value;
-		});
-});
 
 
 

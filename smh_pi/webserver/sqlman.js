@@ -50,12 +50,13 @@
 		console.log(experimentid);
 		try {
 			const dataObj = {
+				id: experimentid,
 				target_gravity: Number((await getExperimentSetting("target_gravity", experimentid))[0].settingdata),
 				experiment_length: Number((await getExperimentSetting("experiment_length", experimentid))[0].settingdata),
 				experiment_start_dt: Date.parse((await getExperimentSetting("experiment_start_dt", experimentid))[0].settingdata),
 				lights_on_time: Number((await getExperimentSetting("lights_on_time", experimentid))[0].settingdata),
 				lights_off_time: Number((await getExperimentSetting("lights_off_time", experimentid))[0].settingdata),
-				experiment_name: (await getExperimentSetting("experiment_name", experimentid))[0].settingdata,
+				experiment_name: (await rawGetQuery("SELECT experiment_name FROM experiments WHERE id = ?;", experimentid))[0].experiment_name,
 				experiment_description: (await getExperimentSetting("experiment_description", experimentid))[0].settingdata,
 			};
 			// console.log(dataObj);
@@ -63,6 +64,10 @@
 		} catch(e) {
 			console.error(e);
 		}
+	}
+	async function getSettingsList() {
+		return await rawGetQuery("SELECT id, experiment_name FROM experiments;");
+
 	}
 	async function setExperimentSetting(setting, value, experimentid) {
 		// console.log("Id: ", experimentid);
@@ -91,6 +96,7 @@
 	module.exports.rawGetQuery = rawGetQuery;
 	module.exports.resetDatabase = resetDatabase;
 
+	module.exports.getSettingsList = getSettingsList;
 	module.exports.getExperimentSettings = getExperimentSettings;
 	module.exports.setExperimentSettings = setExperimentSettings;
 }());

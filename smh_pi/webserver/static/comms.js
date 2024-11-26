@@ -86,13 +86,47 @@ socket.on("experimentdataResponse", (res) => {
 	progressBar.max = Number(res.experiment_length) * 60;
 	timerInterval = setInterval(() => { updateGui() }, 100);
 
+	const select = document.getElementById("dynamic-select");
+	select.value = globalExperimentSettings.id;
 });
+socket.on("experimentList", (res) => {
+	// console.log(res);
+	const select = document.getElementById("dynamic-select");
+	select.innerHTML = "";
+	res.forEach(item => {
+		const option = document.createElement("option");
+		option.value = item.id;
+		option.textContent = item.experiment_name;
+		select.appendChild(option);
+	});
+});
+
+socket.on("accData", (accNum, xyz, accelerometerTimingMillis, value) => {
+	console.log(`${accNum} ${xyz} ${accelerometerTimingMillis} ${value}`);
+});
+
 socket.emit("experimentdataRequest");
 
 window.onload = () => {
 	document.getElementById("input2").addEventListener('input', (e) => { // Calculate the RPM based on the G's
 		console.log("Input");
 		document.getElementById("rpm-calc").innerHTML = `RPM = ${Math.floor(gToRPM(e.target.value) * 10) / 10}`; // change this to the actual formula
+	});
+
+	//-------------------------------------------Select Dropdown-------------------------------------//
+	const select = document.getElementById("dynamic-select");
+
+	// Default position wiht nothing inside
+	const defaultOption = document.createElement("option");
+	defaultOption.value = "";
+	defaultOption.textContent = "Select Previous Runs";
+	defaultOption.selected = true;
+	select.appendChild(defaultOption);
+
+
+	select.addEventListener("change", (ev) => {
+		console.log(`Change to ${ev.target.value}`);
+		socket.emit("experimentchangeId", ev.target.value);
 	});
 }
 

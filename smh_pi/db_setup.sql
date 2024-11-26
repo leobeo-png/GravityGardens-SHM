@@ -1,10 +1,10 @@
 DROP TABLE IF EXISTS experiments;
-CREATE TABLE experiments (id INT PRIMARY KEY, sensornumber INT NOT NULL);
-INSERT INTO experiments (sensornumber) VALUES (1);
+CREATE TABLE experiments (id INTEGER PRIMARY KEY, experiment_name VARCHAR(26) NOT NULL);
+INSERT INTO experiments (experiment_name) VALUES ("Test"), ("Test 2");
 DROP TABLE IF EXISTS experimentLogs;
-CREATE TABLE experimentLogs (id INT PRIMARY KEY, experimentid INT NOT NULL, recordtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP, rpm FLOAT, temperature FLOAT, humidity FLOAT, lightstatus BOOLEAN, CONSTRAINT fk_experiment FOREIGN KEY (experimentid) REFERENCES experiments(id));
+CREATE TABLE experimentLogs (id INTEGER PRIMARY KEY, experimentid INT NOT NULL, recordtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP, rpm FLOAT, temperature FLOAT, humidity FLOAT, lightstatus BOOLEAN, CONSTRAINT fk_experiment FOREIGN KEY (experimentid) REFERENCES experiments(id));
 DROP TABLE IF EXISTS wateringLogs;
-CREATE TABLE wateringLogs (id INT PRIMARY KEY, experimentid INT NOT NULL, wateringtime DATETIME, CONSTRAINT fk_experiment FOREIGN KEY (experimentid) REFERENCES experiments(id));
+CREATE TABLE wateringLogs (id INTEGER PRIMARY KEY, experimentid INT NOT NULL, wateringtime DATETIME, CONSTRAINT fk_experiment FOREIGN KEY (experimentid) REFERENCES experiments(id));
 DROP TABLE IF EXISTS experimentsettings;
-CREATE TABLE experimentsettings (id INT PRIMARY KEY, experimentid INT NOT NULL, settingname VARCHAR(26) NOT NULL, settingdata VARCHAR(26) NOT NULL, CONSTRAINT fk_experiment FOREIGN KEY (experimentid) REFERENCES experiments(id));
-INSERT INTO experimentsettings (experimentid, settingname, settingdata) VALUES (1, "lights_off_time", "60"), (1, "lights_on_time", "30"), (1, "target_gravity", "10"), (1, "experiment_name", "test"), (1, "experiment_start_dt", "11/19/2024 11:20:00"), (1, "experiment_length", "100"), (1, "experiment_description", "test experiment");
+CREATE TABLE experimentsettings (id INTEGER PRIMARY KEY, experimentid INT NOT NULL, settingname VARCHAR(26) NOT NULL, settingdata VARCHAR(26) NOT NULL, CONSTRAINT fk_experiment FOREIGN KEY (experimentid) REFERENCES experiments(id));
+INSERT INTO experimentsettings (experimentid, settingname, settingdata) VALUES (1, "lights_off_time", "60"), (1, "lights_on_time", "30"), (1, "target_gravity", "10"), (1, "experiment_start_dt", "11/19/2024 11:20:00"), (1, "experiment_length", "100"), (1, "experiment_description", "test experiment"), (2, "lights_off_time", "10"), (2, "lights_on_time", "10"), (2, "target_gravity", "5"), (2, "experiment_start_dt", "11/19/2024 11:20:00"), (2, "experiment_length", "100"), (2, "experiment_description", "test experiment #2");

@@ -58,6 +58,7 @@ io.on('connection', (socket) => {
 	});
 	socket.on('experimentdataRequest', async () => {
 		// Get data from database
+		socket.emit("experimentList", await espman.getSettingsList());
 		socket.emit("experimentdataResponse", await espman.getCurrentSettings());
 	});
 	socket.on('experimentchangeId', async (id) => {
@@ -96,4 +97,11 @@ server.listen(port, async () => {
 		() => { console.log("Serial closed"); }
 	);
 	serialman.start(sport, 115200);
+
+	espman.setAccelerometerCallback((accNum, xyz, accelerometerTimingMillis, value) => {
+		io.sockets.emit("accData", accNum, xyz, accelerometerTimingMillis, value);
+	});
+	// setInterval(() => {
+	// 	io.sockets.emit("accData", 1, 'x', 215, 0.01);
+	// }, 5000);
 });
