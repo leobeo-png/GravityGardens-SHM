@@ -31,7 +31,7 @@ h3 {
 
 .container {
     display: grid;
-    grid-template-columns: repeat(3, 33%); /* 2 columns for sensors inside */
+    grid-template-columns: repeat(3, 33%);
     gap: 10px;
     margin: 10px 10px 10px 10px;
 	
@@ -39,7 +39,7 @@ h3 {
 
 .container-input {
     display: grid;
-    grid-template-columns: repeat(3, 50%); /* 2 columns for sensors inside */
+    grid-template-columns: repeat(3, 50%);
     margin: 10px 10px 10px 10px;
     gap: 20px;
     width: 90%;
@@ -118,6 +118,7 @@ input[type="text"] {
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
 
 #input2 {
     border-radius:4px 0 0 4px;
@@ -270,3 +271,18 @@ td, th {
 	max-height: 500px; 
 	overflow-y: auto;
 }
+
+#input1 {
+	border-radius: 4px 0 0 4px;
+}
+
+#dynamic-select {
+	background-color: #f4f4f9;
+	border: 1px solid #dddddd;
+	border-radius: 0 6px 6px 0;
+	margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    padding-left: 10px;
+}
+
