@@ -101,6 +101,12 @@ server.listen(port, async () => {
 	espman.setAccelerometerCallback((accNum, xyz, accelerometerTimingMillis, value) => {
 		io.sockets.emit("accData", accNum, xyz, accelerometerTimingMillis, value);
 	});
+	espman.setSensorCallback((temperature, humidity) => {
+		io.sockets.emit("sensorData", temperature, humidity);
+	});
+	espman.setStatusUpdateCallback((status) => {
+		io.sockets.emit("status", status);
+	});
 	// setInterval(() => {
 	// 	io.sockets.emit("accData", 1, 'x', 215, 0.01);
 	// }, 5000);

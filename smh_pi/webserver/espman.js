@@ -13,6 +13,8 @@
 	var status = "";
 
 	var accCallback;
+	var sensorCallback;
+	var statusUpdateCallback;
 
 	function gToRPM(g) {
 		var womega = Math.sqrt(g * 9.81 / radiusMeter);
@@ -21,7 +23,14 @@
 	}
 	function checkAndExportLogs() {
 		if(espsensordata.temperature != 0 && espsensordata.humidity != 0 && espsensordata.rpm != 0) {
+			if(typeof(sensorCallback) === "function")
+				sensorCallback(espsensordata.temperature, espsensordata.humidity);
+
 			sqlman.writeExperimentLog(settings.experimentid, espsensordata.rpm, espsensordata.temperature, espsensordata.humidity, );
+
+			espsensordata.temperature = 0;
+			espsensordata.humidity = 0;
+			espsensordata.rpm = 0;
 		}
 	}
 	async function getCurrentSettings() {
@@ -42,15 +51,24 @@
 		await sqlman.setExperimentSettings(settings, currentExperimentid);
 	}
 
+	function statusUpdate(newStatus) {
+		status = newStatus;
+		if(typeof(statusUpdateCallback) === "function") {
+			statusUpdateCallback(status);
+		}
+	}
 	async function start() {
 		console.log("Starting...");
+		status = "starting";
 		await serialman.send(`SL ${ gToRPM(settings.target_gravity) }`);
 	}
 	async function pause() {
 		console.log("Pausing...");
+		status = "pausing";
 		await serialman.send("SL 0");
 	}
 	async function hardstop() {
+		status = "FULL STOP!";
 		console.log("Full stop!!!");
 		await serialman.send("STOP ");
 	}
@@ -69,9 +87,11 @@
 			switch(splitdata[0]) {
 				case "HU": // Humidity
 					sensordata.humidity = Number(splitdata[1]);
+					checkAndExportLogs();
 					break;
 				case "TE": // Temperature
 					sensordata.temperature = Number(splitdata[1]);
+					checkAndExportLogs();
 					break;
 				case "A1": // Accelerometer 1
 					handleAccelData("1", splitdata[1], splitdata[2]);
@@ -80,9 +100,16 @@
 					handleAccelData("2", splitdata[1], splitdata[2]);
 					break;
 				case "DO": // Door sensor
+					pause();
 					break;
 				case "SP": // Accelerometer (in RPM)
 					sensordata.rpm = Number(splitdata[1]);
+					checkAndExportLogs();
+
+					if(sensordata.rpm == 0) {
+
+					}
+					if(sensordata.rpm)
 					break;
 				case "SG": // Signal light
 					break;
@@ -117,4 +144,6 @@
 	module.exports.hardstop = hardstop;
 
 	module.exports.setAccelerometerCallback = function(accFun) { accCallback = accFun; }
+	module.exports.setSensorCallback = function(cb) { sensorCallback = cb; }
+	module.exports.setStatusUpdateCallback = function(cb) { statusUpdateCallback = cb; }
 }());
