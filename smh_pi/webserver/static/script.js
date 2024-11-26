@@ -440,8 +440,6 @@ function populateGrid(data) {
 	});
 }
 
-
-
 openModal.addEventListener('click', () => {
 	populateGrid(logExperiments);
 	modal.style.display = 'block';
