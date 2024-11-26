@@ -1,12 +1,10 @@
 DROP TABLE IF EXISTS experiments;
 CREATE TABLE experiments (id INT PRIMARY KEY, sensornumber INT NOT NULL);
-INSERT INTO experiments (sensornumber) VALUES (1), (2), (3), (4), (5), (6);
+INSERT INTO experiments (sensornumber) VALUES (1);
 DROP TABLE IF EXISTS experimentLogs;
-CREATE TABLE experimentLogs (id INT PRIMARY KEY, recordtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP, rpm FLOAT, lightstatus BOOLEAN);
+CREATE TABLE experimentLogs (id INT PRIMARY KEY, experimentid INT NOT NULL, recordtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP, rpm FLOAT, temperature FLOAT, humidity FLOAT, lightstatus BOOLEAN, CONSTRAINT fk_experiment FOREIGN KEY (experimentid) REFERENCES experiments(id));
 DROP TABLE IF EXISTS wateringLogs;
 CREATE TABLE wateringLogs (id INT PRIMARY KEY, experimentid INT NOT NULL, wateringtime DATETIME, CONSTRAINT fk_experiment FOREIGN KEY (experimentid) REFERENCES experiments(id));
-DROP TABLE IF EXISTS sensorLogs;
-CREATE TABLE sensorLogs (id INT PRIMARY KEY, experimentlogid INT NOT NULL, temperature FLOAT, humidity FLOAT, CONSTRAINT fk_experimentlog FOREIGN KEY (experimentlogid) REFERENCES experimentLogs(id));
 DROP TABLE IF EXISTS experimentsettings;
-CREATE TABLE experimentsettings (id INT PRIMARY KEY, settingname VARCHAR(26) NOT NULL, settingdata VARCHAR(26) NOT NULL);
-INSERT INTO experimentsettings (settingname, settingdata) VALUES ("lights_off_time", "60"), ("lights_on_time", "30"), ("target_gravity", "10"), ("experiment_name", "test"), ("experiment_start_dt", "11/19/2024 11:20:00"), ("experiment_length", "100"), ("experiment_description", "test experiment");
+CREATE TABLE experimentsettings (id INT PRIMARY KEY, experimentid INT NOT NULL, settingname VARCHAR(26) NOT NULL, settingdata VARCHAR(26) NOT NULL, CONSTRAINT fk_experiment FOREIGN KEY (experimentid) REFERENCES experiments(id));
+INSERT INTO experimentsettings (experimentid, settingname, settingdata) VALUES (1, "lights_off_time", "60"), (1, "lights_on_time", "30"), (1, "target_gravity", "10"), (1, "experiment_name", "test"), (1, "experiment_start_dt", "11/19/2024 11:20:00"), (1, "experiment_length", "100"), (1, "experiment_description", "test experiment");

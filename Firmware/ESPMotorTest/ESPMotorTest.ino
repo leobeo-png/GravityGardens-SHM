@@ -26,7 +26,7 @@ float readRPM(int rPin) {
       int rpmtmp = (60 * 1000000) / (float)diff;
       if(rpmtmp < 1000) {
         //Serial.println(rpmtmp);
-        rpm = rpmtmp;git
+        rpm = rpmtmp;
         return rpm;
       }
     }
@@ -40,7 +40,7 @@ float readRPM(int rPin) {
 void setup() {
 	pinMode(speedpin, OUTPUT);
 	pinMode(rpmPin, INPUT);
-	Serial.begin(9600);
+	Serial.begin(115200);
   
   analogWrite(speedpin, speed);
 }

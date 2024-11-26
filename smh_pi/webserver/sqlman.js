@@ -41,21 +41,22 @@
 		await db.exec(filedata);
 		await rawQuery("COMMIT;");
 	}
-	async function getExperimentSetting(setting) {
-		var data = await rawGetQuery("SELECT settingdata FROM experimentsettings WHERE settingname = ?;", [ setting ]);
+	async function getExperimentSetting(setting, experimentid) {
+		var data = await rawGetQuery("SELECT settingdata FROM experimentsettings WHERE settingname = ? AND experimentid = ?;", [ setting, experimentid ]);
 		console.log(data);
 		return data;
 	}
-	async function getExperimentSettings() {
+	async function getExperimentSettings(experimentid) {
+		console.log(experimentid);
 		try {
 			const dataObj = {
-				target_gravity: Number((await getExperimentSetting("target_gravity"))[0].settingdata),
-				experiment_length: Number((await getExperimentSetting("experiment_length"))[0].settingdata),
-				experiment_start_dt: Date.parse((await getExperimentSetting("experiment_start_dt"))[0].settingdata),
-				lights_on_time: Number((await getExperimentSetting("lights_on_time"))[0].settingdata),
-				lights_off_time: Number((await getExperimentSetting("lights_off_time"))[0].settingdata),
-				experiment_name: (await getExperimentSetting("experiment_name"))[0].settingdata,
-				experiment_description: (await getExperimentSetting("experiment_description"))[0].settingdata,
+				target_gravity: Number((await getExperimentSetting("target_gravity", experimentid))[0].settingdata),
+				experiment_length: Number((await getExperimentSetting("experiment_length", experimentid))[0].settingdata),
+				experiment_start_dt: Date.parse((await getExperimentSetting("experiment_start_dt", experimentid))[0].settingdata),
+				lights_on_time: Number((await getExperimentSetting("lights_on_time", experimentid))[0].settingdata),
+				lights_off_time: Number((await getExperimentSetting("lights_off_time", experimentid))[0].settingdata),
+				experiment_name: (await getExperimentSetting("experiment_name", experimentid))[0].settingdata,
+				experiment_description: (await getExperimentSetting("experiment_description", experimentid))[0].settingdata,
 			};
 			// console.log(dataObj);
 			return dataObj;
@@ -63,19 +64,27 @@
 			console.error(e);
 		}
 	}
-	async function setExperimentSetting(setting, value) {
-		return await rawQuery("UPDATE experimentsettings SET settingdata = ? WHERE settingname = ?;", [value, setting]);
+	async function setExperimentSetting(setting, value, experimentid) {
+		// console.log("Id: ", experimentid);
+		return await rawQuery("UPDATE experimentsettings SET settingdata = ? WHERE settingname = ? AND experimentid = ?;", [value, setting, experimentid]);
 	}
-	async function setExperimentSettings(settingsObject) {
+	async function setExperimentSettings(settingsObject, experimentid) {
 		try {
 			for(const [key, val] of Object.entries(settingsObject)) {
 				console.log(key, val);
-				setExperimentSetting(key, `${val}`);
+				setExperimentSetting(key, `${val}`, experimentid);
 			}
 		} catch (e) {
 			console.error(e);
 		}
 	}
+
+	async function writeExperimentLog(experimentid, rpm, humidity, temperature, lightstatus) {
+		return await rawQuery("INSERT INTO experimentlogs (experimentid, rpm, temperature, humidity, lightstatus) VALUES (?, ?, ?, ?)",
+			[ experimentid, rpm, temperature, humidity, lightstatus ]
+		);
+	}
+
 
 	module.exports.setup = setupDatabase;
 	module.exports.rawQuery = rawQuery;

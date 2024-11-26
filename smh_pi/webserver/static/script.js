@@ -337,9 +337,9 @@ document.getElementById('settingsForm').addEventListener('submit', function (eve
   }
 }); */
 // Change RPM calc based on input
-document.getElementById("input2").addEventListener('input', (e) => { // Calculate the RPM based on the G's
-    document.getElementById("rpm-calc").innerHTML = `RPM = ${gforceToRPM(e.target.value)}`; // change this to the actual formula
-});
+// document.getElementById("input2").addEventListener('input', (e) => { // Calculate the RPM based on the G's
+//     document.getElementById("rpm-calc").innerHTML = `RPM = ${gforceToRPM(e.target.value)}`; // change this to the actual formula
+// });
 
 function gforceToRPM(gForce) {
   const radius = 50; // Centimeters

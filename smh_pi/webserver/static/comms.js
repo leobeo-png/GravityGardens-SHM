@@ -1,7 +1,14 @@
 const socket = io();
+const radius = 0.251;
 
 var globalExperimentSettings;
 var timerInterval;
+
+function gToRPM(g) {
+	var womega = Math.sqrt(g * 9.81 / radius);
+	var rpm = womega * (30 / Math.PI);
+	return rpm;
+}
 
 socket.on("temperature", (t, sensorId) => {
 	const x = (new Date()).getTime(),
@@ -81,4 +88,11 @@ socket.on("experimentdataResponse", (res) => {
 
 });
 socket.emit("experimentdataRequest");
+
+window.onload = () => {
+	document.getElementById("input2").addEventListener('input', (e) => { // Calculate the RPM based on the G's
+		console.log("Input");
+		document.getElementById("rpm-calc").innerHTML = `RPM = ${Math.floor(gToRPM(e.target.value) * 10) / 10}`; // change this to the actual formula
+	});
+}
 
