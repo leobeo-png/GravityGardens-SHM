@@ -29,7 +29,7 @@
 		currentExperimentid = experimentid
 		settings = await sqlman.getExperimentSettings(currentExperimentid);
 	}
-	async function editSettings(experimentid, settingsdata) {
+	async function editSettings(settingsdata) {
 		settings = settingsdata;
 		await writeCurrentSettings();
 	}
@@ -38,15 +38,15 @@
 	}
 
 	async function start() {
-		await serialman.send(`SL ${ gToRPM() }`);
+		console.log("Starting...");
+		await serialman.send(`SL ${ gToRPM(settings.target_gravity) }`);
 	}
 	async function pause() {
-		await serialman.send("SL 0");
-	}
-	async function stop() {
+		console.log("Pausing...");
 		await serialman.send("SL 0");
 	}
 	async function hardstop() {
+		console.log("Full stop!!!");
 		await serialman.send("STOP ");
 	}
 
@@ -91,4 +91,8 @@
 	module.exports.getCurrentSettings = getCurrentSettings;
 	module.exports.changeSettings = changeSettings;
 	module.exports.editSettings = editSettings;
+
+	module.exports.start = start;
+	module.exports.pause = pause;
+	module.exports.hardstop = hardstop;
 }());

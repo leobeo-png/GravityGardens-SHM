@@ -23,11 +23,12 @@
         <div class="form-row">
             <label for="input1">Experiment Name:</label>
             <input type="text" id="input1" name="input1">
+			<select id="dynamic-select"></select>
         </div>
         <div class="form-row">
             <label for="input2">Motor Speed (g):</label>
-            <input type="text" id="input2" name="input2">
-            <p id="rpm-calc">RPM = 0</p>
+            <input type="text" id="input2" name="input2" placeholder="e.g. 10" min="1" required>
+            <span id="rpm-calc">RPM = 0</span>
         </div>
         <div class="form-row">
             <label for="input3">Time (Minutes):</label> <!-- How specific do we want the time-set (Hours, minutes?) -->
@@ -63,9 +64,9 @@
         </div>
         <progress id="progressBar" value="50" max="100"></progress>
         <br>
-        <button class="normal-button" onclick="ContinueProgress()">Continue</button>
-        <button class="normal-button" onclick="PauseProgress()">Pause</button>
-        <button id="special-button" onclick="stopProgress()">Stop</button>
+        <button class="normal-button" onclick="socket.emit('continueButton')">Continue</button>
+        <button class="normal-button" onclick="socket.emit('pauseButton')">Pause</button>
+        <button id="special-button" onclick="socket.emit('stopButton')">Stop</button>
         <!-- after clicking the button, it should say the state that it is in (paused, stopped, running)-->
     </div>
     <div id="logs">
@@ -73,6 +74,31 @@
     </div>
 </div>
 <div id="statusMessage"></div>
+
+<!-- Floating window -->
+<div id="modal" class="modal">
+	<div class="modal-content">
+	<span class="close">&times;</span> <!-- this is the X to close -->
+		<h2>Logs</h2>
+		<div class="table-container">
+			<table>
+			<thead>
+				<tr>
+					<th>Experiment Name</th>
+					<th>Motor G</th>
+					<th>Time Started</th> <!-- should it receive the time stamp of starting and stopping -->
+					<th>Time Ended</th>
+					<th>Description</th>
+					<th>Download XLSX</th>
+				</tr>
+			</thead>
+			<tbody id="experiment-content"> <!-- Dynamic table insert from the javascript -->
+
+			</tbody>
+			</table>
+		</div>
+	</div>
+</div>
 
 <div class="container">
     <div id="chart-combined"></div>

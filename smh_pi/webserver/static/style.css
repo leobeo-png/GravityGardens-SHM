@@ -31,14 +31,15 @@ h3 {
 
 .container {
     display: grid;
-    grid-template-columns: repeat(3, 33%); /* 2 columns for sensors inside */
+    grid-template-columns: repeat(3, 33%);
     gap: 10px;
     margin: 10px 10px 10px 10px;
+	
 }
 
 .container-input {
     display: grid;
-    grid-template-columns: repeat(3, 50%); /* 2 columns for sensors inside */
+    grid-template-columns: repeat(3, 50%);
     margin: 10px 10px 10px 10px;
     gap: 20px;
     width: 90%;
@@ -83,6 +84,16 @@ a:hover, a:active {
     display: flex;
     align-items: stretch;
     margin-bottom: 10px;
+    white-space: nowrap;
+    z-index: 1;
+    & > span {
+        text-align: center;
+        border: 1px solid #CDD9ED;
+        font-size: 14px;
+        line-height: 25px;
+        border-radius: 0 6px 6px 0;
+        padding-right:10px;
+    }
 }
 
 input {
@@ -92,13 +103,11 @@ input {
 }
 
 
-input[type="textarea"] {
+textarea {
     flex: 1;
-    width: 50px;
-    height: 60px;
     margin-left: 10px;
     border: 1px solid #ccc;
-    border-radius: 3px;
+    border-radius: 4px;
 }
 
 input[type="text"] {
@@ -108,6 +117,11 @@ input[type="text"] {
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
+}
+
+
+#input2 {
+    border-radius:4px 0 0 4px;
 }
 
 input[type="submit"] {
@@ -131,7 +145,9 @@ progress {
     width: 50%;
     height: 30px;
     margin-bottom: 10px;
+    border-radius: 10px;
 }
+
 
 #progress-info {
     font-size: 16px;
@@ -140,6 +156,7 @@ progress {
 
 #logs {
     width: fit-content;
+	height: fit-content;
 }
 
 .normal-button {
@@ -191,7 +208,9 @@ progress {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 70%;
+    width: fit-content;
+	height: fit-content;
+
 }
 
 #rpm-calc {
@@ -200,3 +219,70 @@ progress {
     margin-bottom: 10px;
     padding-left: 10px;
 }
+
+/* pop-up background */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+/* content style */
+.modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* close button */
+.close {
+  float: right;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: red;
+}
+
+table {
+	border-collapse: collapse;
+	width:100%;
+}
+
+td, th {
+	border: 1px solid #dddddd;
+	text-align:left;
+	padding:8px;
+}
+
+.table-container {
+	max-height: 500px; 
+	overflow-y: auto;
+}
+
+#input1 {
+	border-radius: 4px 0 0 4px;
+}
+
+#dynamic-select {
+	background-color: #f4f4f9;
+	border: 1px solid #dddddd;
+	border-radius: 0 6px 6px 0;
+	margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    padding-left: 10px;
+}
+

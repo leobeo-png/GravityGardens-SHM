@@ -46,7 +46,8 @@ app.post("/start", async (req, res) => {
 	dataObj.experiment_start_dt = new Date().toString();
 	// console.log(dataObj);
 
-	await espman.changeSettings(dataObj);
+	await espman.editSettings(dataObj);
+	await espman.start();
 
 	res.status(200).redirect("/");
 });
@@ -63,6 +64,10 @@ io.on('connection', (socket) => {
 		await espman.changeSettings(id);
 		socket.emit("experimentdataResponse", await espman.getCurrentSettings());
 	});
+
+	socket.on("continueButton", async() => { await espman.start(); });
+	socket.on("pauseButton", async() => { await espman.pause(); });
+	socket.on("stopButton", async() => { await espman.hardstop(); });
 
 	console.log("User connected");
 });
@@ -82,12 +87,11 @@ server.listen(port, async () => {
 	serialman.setCallbacks(
 		() => {
 			console.log("Serial opened");
-			serialman.send("69\n");
 		},
 		(data) => {
 			var sdatarec = data.toString();
 			// console.log(`Serial: ${sdatarec}`);
-
+			espman.handleSerialData(sdatarec);
 		},
 		() => { console.log("Serial closed"); }
 	);

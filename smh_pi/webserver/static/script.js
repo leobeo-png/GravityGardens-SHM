@@ -401,45 +401,104 @@ function StartTimer() { // for the whole machine time
     }, 1000);
 }
 
-function ContinueProgress() {
-    // Send POST to RUN
-    statusText.textContent = "Running";
-    countdownInterval = setInterval(() => { // same as starting
-        if (timeRemaining <= 0) {
-            clearInterval(countdownInterval);
-            statusText.textContent = "Completed";
-            timeRemainingElement.textContent = "00:00";
-            alert("Time is up!");
-        } else {
-            timeRemaining--;
-            const hours = Math.floor(timeRemaining / 3600);
-            const minutes = Math.floor((timeRemaining % 3600) / 60);
-            const seconds = timeRemaining % 60;
+//------------------------------------------Log Window---------------------------------------------------------//
 
-            const formattedTime =
-                hours > 0
-                    ? `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-                    : `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+const openModal = document.getElementById('view-log');
+const modal = document.getElementById('modal');
+const closeModal = document.querySelector('.close');
+const experimentContent = document.getElementById('experiment-content');
 
-            timeRemainingElement.textContent = formattedTime;
-            progressBar.value = timeRemaining;
-        }
-    }, 1000);
+// Just a prototype right now
+// Change this contents to the database data?
+const logExperiments = [
+	{ name: "Experiment #1", G: 10, startTime: "10:00 AM", endTime: "8:00 PM", desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #2", G: 13, startTime: "12:00 AM", endTime: "10:00 PM", desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #3", G: 15, startTime: "11:00 AM", endTime: "9:00 PM",  desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #4", G: 15, startTime: "11:00 AM", endTime: "9:00 PM",  desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #5", G: 15, startTime: "11:00 AM", endTime: "9:00 PM",  desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #6", G: 15, startTime: "11:00 AM", endTime: "9:00 PM",  desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #7", G: 15, startTime: "11:00 AM", endTime: "9:00 PM",  desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+	{ name: "Experiment #8", G: 15, startTime: "11:00 AM", endTime: "9:00 PM",  desc: "This experiment consists of many things that affects thing and makes things do other stuff and yeah and nah." },
+];
+
+function populateGrid(data) {
+	experimentContent.innerHTML = "";
+	data.forEach((experiment) => { // data is converted to an object (experiment)
+		experimentContent.innerHTML +=
+		`
+		<tr>
+		<td>${experiment.name}</td>
+		<td>${experiment.G}</td>
+		<td>${experiment.startTime}</td>
+		<td>${experiment.endTime}</td>
+		<td>${experiment.desc}</td>
+		<td>
+			<button class="normal-button" onclick="download-xml">Download</button>
+		</td>
+		</tr>
+		`; // download button linked to another function to download according to the experiment number?
+	});
 }
 
-function PauseProgress() {
-    statusText.textContent = "Paused";
-    clearInterval(countdownInterval);
-    // Send POST to STOP
-}
 
-function stopProgress() {
-    clearInterval(countdownInterval);
-    statusText.textContent = "Stopped";
-    timeRemainingElement.textContent = "00:00";
-    progressBar.value = 0;
-    input3.value = "";
 
-    // Send POST to STOP and save the Logs into the database
-    // have a confirmation to stop or not (or was it to save or trash the result)
-}
+openModal.addEventListener('click', () => {
+	populateGrid(logExperiments);
+	modal.style.display = 'block';
+});
+
+closeModal.addEventListener('click', () => {
+	modal.style.display = 'none';
+});
+
+window.addEventListener('click', (event) => {
+	if (event.target === modal) {
+		modal.style.display = 'none';
+	}
+});
+
+//-------------------------------------------Select Dropdown-------------------------------------//
+const selectOptions = [ // change this to the actual database information
+{ input1: "Test 1", input2: 11, input3: "3600", input4: "2400", input5: "800", input6: "This experiment is a yeah nah attempt" },
+{ input1: "do you know the way?", input2: 12, input3: "7200", input4: "2800", input5: "600", input6: "bruh" },
+{ input1: "Testing different lenghts", input2: 13, input3: "4800", input4: "3000", input5: "1200", input6: "yeah nah nah yeah" },
+{ input1: "wkwkwkwkw", input2: 14, input3: "1600", input4: "4400", input5: "400", input6: "floccinaucinihilipfication" },
+{ input1: "h", input2: 15, input3: "9000", input4: "800", input5: "2400", input6: "permisi bang, ini ada yang mau pulang krna udh nyerah katanya." },
+]
+
+const select = document.getElementById("dynamic-select");
+
+// Default position wiht nothing inside
+const defaultOption = document.createElement("option");
+defaultOption.value = "";
+defaultOption.textContent = "Select Previous Runs";
+defaultOption.selected = true;
+select.appendChild(defaultOption);
+
+// dynamically create items in the select dropdown depending on the array
+selectOptions.forEach(item => {
+	const option = document.createElement("option");
+	option.value = item.input1;
+	option.textContent = item.input1;
+	select.appendChild(option);
+});
+
+select.addEventListener("change", () => {
+	const selected = selectOptions.find(item => item.input1 === select.value);
+
+	// selected only checks if the value is the same as the item
+	// if it's not then it should go to the default and clear all the input text
+	if (!selected)
+		["input1", "input2", "input3", "input4", "input5", "input6"].forEach(key => {
+			const input = document.getElementById(key);
+			if (input) input.value = "";
+	});
+	// this is to fill the input text from the array
+	Object.entries(selected).forEach(([key, value]) => {
+			const input = document.getElementById(key);
+			if (input) input.value = value;
+		});
+});
+
+
+
