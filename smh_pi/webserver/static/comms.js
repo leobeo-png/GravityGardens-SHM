@@ -51,7 +51,7 @@ function updateGui() {
 	var ir = isRunning();
 	document.getElementById("time-remaining").innerHTML = `${Math.floor(ir.timeleft.getTime() / 1000)}`;
 	document.getElementById("experiment-end").innerHTML = `${ir.end.toString()}`;
-	document.getElementById("status-text").innerHTML = `${ ir.running == true ? "Running" : "Stopped" }`;
+	// document.getElementById("status-text").innerHTML = `${ ir.running == true ? "Running" : "Stopped" }`;
 
 	progressBar.value = ir.timeleft.getTime() / 1000;
 
@@ -128,6 +128,9 @@ socket.on("accData", (accNum, xyz, accelerometerTimingMillis, value) => {
 		chartA.series[accelAxis].addPoint([accelerometerTimingMillis, accel], true, false, true);
 	}
 });
+socket.on("status", (status) => {
+	document.getElementById("status-text").innerHTML = `${ status }`;
+})
 
 function resetAccel () { // call this function for when the RPM changes
 	chartA.series.forEach(series => { 

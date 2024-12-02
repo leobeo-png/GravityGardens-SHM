@@ -59,16 +59,16 @@
 	}
 	async function start() {
 		console.log("Starting...");
-		status = "starting";
+		statusUpdate("starting");
 		await serialman.send(`SL ${ gToRPM(settings.target_gravity) }`);
 	}
 	async function pause() {
 		console.log("Pausing...");
-		status = "pausing";
+		statusUpdate("pausing");
 		await serialman.send("SL 0");
 	}
 	async function hardstop() {
-		status = "FULL STOP!";
+		statusUpdate("FULL STOP!");
 		console.log("Full stop!!!");
 		await serialman.send("STOP ");
 	}
@@ -107,9 +107,8 @@
 					checkAndExportLogs();
 
 					if(sensordata.rpm == 0) {
-
+						statusUpdate("Stopped");
 					}
-					if(sensordata.rpm)
 					break;
 				case "SG": // Signal light
 					break;
