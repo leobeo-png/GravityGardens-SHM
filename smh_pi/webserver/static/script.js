@@ -1,4 +1,4 @@
-var chartTH = new Highcharts.Chart({
+var chartTH = new Highcharts.Chart('chart-combined',{
     chart: {
         renderTo: 'chart-combined'
     },
@@ -122,9 +122,15 @@ function fetchHumidityData(sensorId) {
 }
 
 
-var chartA = new Highcharts.Chart({
+var chartA = new Highcharts.Chart('chart-accel',{
     chart: {
         renderTo: 'chart-accel'
+		
+    },
+	boost: {
+        enabled: true,
+        useGPUTranslations: true,
+        seriesThreshold: 1
     },
     series: [
         {
@@ -225,9 +231,14 @@ function fetchAccelData(sensorId) {
     }, 300); //300ms
 }
 
-var chartR = new Highcharts.Chart({
+var chartR = new Highcharts.Chart('chart-rpm',{
     chart: {
         renderTo: 'chart-rpm'
+    },
+	boost: {
+        enabled: true,
+        useGPUTranslations: true,
+        seriesThreshold: 1
     },
     series: [
         {
