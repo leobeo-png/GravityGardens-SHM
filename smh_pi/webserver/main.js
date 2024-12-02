@@ -60,6 +60,8 @@ io.on('connection', (socket) => {
 		// Get data from database
 		socket.emit("experimentList", await espman.getSettingsList());
 		socket.emit("experimentdataResponse", await espman.getCurrentSettings());
+		espman.statusReturn();
+		espman.updateLights();
 	});
 	socket.on('experimentchangeId', async (id) => {
 		await espman.changeSettings(id);
@@ -90,9 +92,10 @@ server.listen(port, async () => {
 			console.log("Serial opened");
 		},
 		(data) => {
-			var sdatarec = data.toString();
-			// console.log(`Serial: ${sdatarec}`);
-			espman.handleSerialData(sdatarec);
+			// var sdatarec = data.toString();
+			// console.log(`Serial: ${data}`);
+			// console.log("Serial2: ", data.toString().split("\r\n"));
+			espman.handleSerialData(data.toString());
 		},
 		() => { console.log("Serial closed"); }
 	);
@@ -106,6 +109,10 @@ server.listen(port, async () => {
 	});
 	espman.setStatusUpdateCallback((status) => {
 		io.sockets.emit("status", status);
+	});
+	espman.setLightsCallback((lightsOn, timeEnd) => {
+		console.log(lightsOn, timeEnd);
+		io.sockets.emit("lights", lightsOn, timeEnd);
 	});
 	// setInterval(() => {
 	// 	io.sockets.emit("accData", 1, 'x', 215, 0.01);

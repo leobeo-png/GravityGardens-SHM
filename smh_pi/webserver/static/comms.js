@@ -3,6 +3,8 @@ const radius = 0.251;
 
 var globalExperimentSettings;
 var timerInterval;
+var lightsOn;
+var lightTimeEnd;
 
 function gToRPM(g) {
 	var womega = Math.sqrt(g * 9.81 / radius);
@@ -10,7 +12,7 @@ function gToRPM(g) {
 	return rpm;
 }
 
-socket.on("temperature", (t, sensorId) => {
+function temperatureD(t, sensorId) {
 	const x = (new Date()).getTime(),
 		temperature = parseFloat(t); // Parse temperature value from response
 
@@ -20,9 +22,9 @@ socket.on("temperature", (t, sensorId) => {
 	} else {
 		chartTH.series[sensorId - 1].addPoint([x, temperature], true, false, true);
 	}
-});
+}
 
-socket.on("humidity", (h, sensorId) => {
+function humidityD(h, sensorId) {
 	const x = (new Date()).getTime(),
 		humidity = parseFloat(h); // Parse humidity value from response
 
@@ -32,6 +34,10 @@ socket.on("humidity", (h, sensorId) => {
 	} else {
 		chartTH.series[sensorId + 1].addPoint([x, humidity], true, false, true);
 	}
+}
+socket.on("sensorData", (temperature, humidity) => {
+	temperatureD(temperature, 0);
+	humidityD(humidityD, 0);
 });
 
 function isRunning() {
@@ -52,6 +58,7 @@ function updateGui() {
 	document.getElementById("time-remaining").innerHTML = `${Math.floor(ir.timeleft.getTime() / 1000)}`;
 	document.getElementById("experiment-end").innerHTML = `${ir.end.toString()}`;
 	// document.getElementById("status-text").innerHTML = `${ ir.running == true ? "Running" : "Stopped" }`;
+	document.getElementById("light-status").innerHTML = `Lights are ${lightsOn == true ? "on" : "off"} for ${ Math.floor(((new Date(lightTimeEnd)).getTime() - (new Date()).getTime()) / 1000) } seconds`;
 
 	progressBar.value = ir.timeleft.getTime() / 1000;
 
@@ -60,8 +67,13 @@ function updateGui() {
 	}
 }
 
-socket.on("rpm", (rpm) => {
-	console.log(rpm);
+socket.on("rpm", (rpm) => {// Add point to the temperature series and limit to 1000 points
+	const x = (new Date()).getTime();
+	if (chartR.series[0].data.length > 100) {
+		chartR.series[0].addPoint([x, rpm], true, true, true); // redraw, shift, animation, with event
+	} else {
+		chartR.series[0].addPoint([x, rpm], true, false, true);
+	}
 });
 
 socket.on("experimentdataResponse", (res) => {
@@ -83,6 +95,9 @@ socket.on("experimentdataResponse", (res) => {
 	document.getElementById("input5").dispatchEvent(new Event("input"));
 	document.getElementById("input6").dispatchEvent(new Event("input"));
 
+	document.getElementById("time-on").innerHTML = res.lights_on_time;
+	document.getElementById("time-off").innerHTML = res.lights_off_time;
+
 	progressBar.max = Number(res.experiment_length) * 60;
 	timerInterval = setInterval(() => { updateGui() }, 100);
 
@@ -100,20 +115,26 @@ socket.on("experimentList", (res) => {
 		select.appendChild(option);
 	});
 });
+socket.on("lights", (lightsOnIn, timeEnd) => {
+	// console.log(timeStart);
+	lightsOn = lightsOnIn;
+	lightTimeEnd = timeEnd;
+});
 
 socket.on("accData", (accNum, xyz, accelerometerTimingMillis, value) => {
-	console.log(`${accNum} ${xyz} ${accelerometerTimingMillis} ${value}`);
+	if(value != 0) console.log(`${accNum} ${xyz} ${accelerometerTimingMillis} ${value}`);
 	const accel = parseFloat(value); 
+	return;
 	
 	let accelAxis;
 	switch(xyz) {
-		case "x":
+		case "X":
 		accelAxis = (accNum - 1) * 3; // index 0 and 3
 		break;
-		case "y":
+		case "Y":
 		accelAxis = (accNum - 1) * 3 + 1; // index 1 and 4
 		break;
-		case "z":
+		case "Z":
 		accelAxis = (accNum - 1) * 3 + 2; // index 2 and 5
 		break;
 		default:
@@ -122,7 +143,7 @@ socket.on("accData", (accNum, xyz, accelerometerTimingMillis, value) => {
 		break;
 	}
 		
-	if (chartA.series[accelAxis].data.length > 100) {
+	if (chartA.series[accelAxis].data.length > 10) {
 		chartA.series[accelAxis].addPoint([accelerometerTimingMillis, accel], true, true, true);
 	} else {
 		chartA.series[accelAxis].addPoint([accelerometerTimingMillis, accel], true, false, true);

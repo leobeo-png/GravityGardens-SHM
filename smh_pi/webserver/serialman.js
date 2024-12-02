@@ -7,19 +7,21 @@
 	var receiveCallback;
 	var stopCallback;
 
+	var parser;
+
 	module.exports.list = async function() {
 		return await SerialPort.SerialPort.list();
 	}
 	module.exports.start = async function(port, baudrate) {
 		openedSerialport = new SerialPort.SerialPort({
 			path: port,
-			baudRate: baudrate,
-			parser: new ReadlineParser("\n")
+			baudRate: baudrate
 		});
+		parser = openedSerialport.pipe(new ReadlineParser({ delimiter: '\r\n' }));
 		openedSerialport.on("open", () => {
 			if(typeof(startCallback) === "function") startCallback();
 		});
-		openedSerialport.on("data", (data) => {
+		parser.on('data', (data) => {
 			if(typeof(receiveCallback) === "function") receiveCallback(data);
 		});
 		openedSerialport.on("close", () => {

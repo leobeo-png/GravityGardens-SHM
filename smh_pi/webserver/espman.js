@@ -15,6 +15,13 @@
 	var accCallback;
 	var sensorCallback;
 	var statusUpdateCallback;
+	var lightsCallback;
+
+	var dataGetInterval;
+
+	var lightsOn = true;
+	var timeEnd;
+	var lightsTimer;
 
 	function gToRPM(g) {
 		var womega = Math.sqrt(g * 9.81 / radiusMeter);
@@ -31,6 +38,33 @@
 			espsensordata.temperature = 0;
 			espsensordata.humidity = 0;
 			espsensordata.rpm = 0;
+		}
+	}
+	function getLightStatus() {
+		return lightsOn();
+	}
+	function lightStatusFun() {
+		if (lightsOn == false) {
+			lightsOn = true;
+			timeEnd = new Date((new Date()).getTime() + settings.lights_on_time * 60000);
+			lightsTimer = setTimeout(lightStatusFun, settings.lights_on_time * 60000);
+		} else if (lightsOn == true) {
+			lightsOn = false;
+			timeEnd = new Date((new Date()).getTime() + settings.lights_off_time * 60000);
+			lightsTimer = setTimeout(lightStatusFun, settings.lights_off_time * 60000);
+		}
+		updateLights();
+	}
+	function updateLights() {
+		// Set lights on/off
+		if(!timeEnd) {
+		// 	lightStatusFun();
+			console.log("Error: Lights not started!");
+			return;
+		}
+		console.log(`Lights are ${lightsOn == true ? "on" : "off"}`);
+		if(typeof(lightsCallback) === "function") {
+			lightsCallback(lightsOn, timeEnd.toString());
 		}
 	}
 	async function getCurrentSettings() {
@@ -51,30 +85,43 @@
 		await sqlman.setExperimentSettings(settings, currentExperimentid);
 	}
 
-	function statusUpdate(newStatus) {
-		status = newStatus;
+	function statusReturn() {
 		if(typeof(statusUpdateCallback) === "function") {
 			statusUpdateCallback(status);
 		}
 	}
+	function statusUpdate(newStatus) {
+		status = newStatus;
+		statusReturn();
+	}
 	async function start() {
 		console.log("Starting...");
 		statusUpdate("starting");
-		await serialman.send(`SL ${ gToRPM(settings.target_gravity) }`);
+
+		dataGetInterval = setInterval(() => {
+			serialman.send("GD \n");
+		}, 5000);
+
+		lightsOn = false;
+		lightStatusFun();
+
+		await serialman.send(`SL ${ gToRPM(settings.target_gravity) }\n`);
 	}
 	async function pause() {
 		console.log("Pausing...");
+		clearInterval(dataGetInterval);
 		statusUpdate("pausing");
-		await serialman.send("SL 0");
+		await serialman.send("SL 0\n");
 	}
 	async function hardstop() {
 		statusUpdate("FULL STOP!");
 		console.log("Full stop!!!");
-		await serialman.send("STOP ");
+		await serialman.send("STOP \n");
 	}
 
 	var accelerometerTimingMillis = 0;
 	function handleAccelData(accNum, xyz, value) {
+		if(value != 0) console.log(accNum, xyz, value);
 		if(typeof(accCallback === "function")) {
 			accCallback(accNum, xyz, accelerometerTimingMillis, Number(value));
 		}
@@ -83,14 +130,14 @@
 	module.exports.gToRPM = gToRPM;
 	module.exports.handleSerialData = function(data) {
 		try {
-			var splitdata = sdatarec.split(" ");
+			var splitdata = data.split(" ");
 			switch(splitdata[0]) {
 				case "HU": // Humidity
-					sensordata.humidity = Number(splitdata[1]);
+					espsensordata.humidity = Number(splitdata[1]);
 					checkAndExportLogs();
 					break;
 				case "TE": // Temperature
-					sensordata.temperature = Number(splitdata[1]);
+					espsensordata.temperature = Number(splitdata[1]);
 					checkAndExportLogs();
 					break;
 				case "A1": // Accelerometer 1
@@ -103,10 +150,10 @@
 					pause();
 					break;
 				case "SP": // Accelerometer (in RPM)
-					sensordata.rpm = Number(splitdata[1]);
+					espsensordata.rpm = Number(splitdata[1]);
 					checkAndExportLogs();
 
-					if(sensordata.rpm == 0) {
+					if(espsensordata.rpm == 0) {
 						statusUpdate("Stopped");
 					}
 					break;
@@ -125,11 +172,12 @@
 					}
 					break;
 				default:
-					console.warn("Unknown serial command")
+					console.warn("Unknown serial command: ", data, splitdata);
 					break;
 			}
 		} catch (e) {
 			console.error(e);
+			console.error("Incoming data on error: ", data);
 		}
 	}
 
@@ -137,6 +185,8 @@
 	module.exports.getSettingsList = getSettingsList;
 	module.exports.changeSettings = changeSettings;
 	module.exports.editSettings = editSettings;
+	module.exports.statusReturn = statusReturn;
+	module.exports.updateLights = updateLights;
 
 	module.exports.start = start;
 	module.exports.pause = pause;
@@ -145,4 +195,5 @@
 	module.exports.setAccelerometerCallback = function(accFun) { accCallback = accFun; }
 	module.exports.setSensorCallback = function(cb) { sensorCallback = cb; }
 	module.exports.setStatusUpdateCallback = function(cb) { statusUpdateCallback = cb; }
+	module.exports.setLightsCallback = function(cb) { lightsCallback = cb; }
 }());
