@@ -129,8 +129,8 @@ var chartA = new Highcharts.Chart('chart-accel',{
     },
 	boost: {
         enabled: true,
-        useGPUTranslations: true,
-        seriesThreshold: 1
+        useGPUTranslations: true
+        // seriesThreshold: 1
     },
     series: [
         {
@@ -138,6 +138,7 @@ var chartA = new Highcharts.Chart('chart-accel',{
             type: 'line',
             color: '#101D42',
             marker: {
+				enabled: false,
                 symbol: 'circle',
                 radius: 3,
                 fillColor: '#101D42',
@@ -148,6 +149,7 @@ var chartA = new Highcharts.Chart('chart-accel',{
             type: 'line',
             color: '#00A6A6',
             marker: {
+				enabled: false,
                 symbol: 'square',
                 radius: 3,
                 fillColor: '#00A6A6',
@@ -158,6 +160,7 @@ var chartA = new Highcharts.Chart('chart-accel',{
             type: 'line',
             color: '#8B2635',
             marker: {
+				enabled: false,
                 symbol: 'triangle',
                 radius: 3,
                 fillColor: '#8B2635',
@@ -168,6 +171,7 @@ var chartA = new Highcharts.Chart('chart-accel',{
             type: 'line',
             color: '#71B48D',
             marker: {
+				enabled: false,
                 symbol: 'triangle-down',
                 radius: 3,
                 fillColor: '#71B48D',
@@ -178,6 +182,7 @@ var chartA = new Highcharts.Chart('chart-accel',{
             type: 'line',
             color: '#844494',
             marker: {
+				enabled: false,
                 symbol: 'diamond',
                 radius: 3,
                 fillColor: '#844494',
@@ -188,6 +193,7 @@ var chartA = new Highcharts.Chart('chart-accel',{
             type: 'line',
             color: '#9aa83b',
             marker: {
+				enabled: false,
                 symbol: 'cross',
                 radius: 3,
                 fillColor: '#9aa83b',
@@ -198,8 +204,11 @@ var chartA = new Highcharts.Chart('chart-accel',{
         text: undefined
     },
     xAxis: {
-        type: 'datetime',
-        dateTimeLabelFormats: {second: '%H:%M:%S'}
+		labels: {
+			enabled: false
+		}
+        // type: 'datetime',
+        // dateTimeLabelFormats: {second: '%H:%M:%S'}
     },
     yAxis: {
         title: {

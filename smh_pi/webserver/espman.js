@@ -29,9 +29,10 @@
 		console.log(rpm);
 	}
 	function checkAndExportLogs() {
+		console.log(espsensordata);
 		if(espsensordata.temperature != 0 && espsensordata.humidity != 0 && espsensordata.rpm != 0) {
 			if(typeof(sensorCallback) === "function")
-				sensorCallback(espsensordata.temperature, espsensordata.humidity);
+				sensorCallback(espsensordata.temperature, espsensordata.humidity, espsensordata.rpm);
 
 			sqlman.writeExperimentLog(settings.experimentid, espsensordata.rpm, espsensordata.temperature, espsensordata.humidity, );
 
@@ -98,6 +99,7 @@
 		console.log("Starting...");
 		statusUpdate("starting");
 
+		clearInterval(dataGetInterval);
 		dataGetInterval = setInterval(() => {
 			serialman.send("GD \n");
 		}, 5000);
@@ -121,7 +123,7 @@
 
 	var accelerometerTimingMillis = 0;
 	function handleAccelData(accNum, xyz, value) {
-		if(value != 0) console.log(accNum, xyz, value);
+		// if(value != 0) console.log(accNum, xyz, value);
 		if(typeof(accCallback === "function")) {
 			accCallback(accNum, xyz, accelerometerTimingMillis, Number(value));
 		}
@@ -134,10 +136,12 @@
 			switch(splitdata[0]) {
 				case "HU": // Humidity
 					espsensordata.humidity = Number(splitdata[1]);
+					console.log(splitdata);
 					checkAndExportLogs();
 					break;
 				case "TE": // Temperature
 					espsensordata.temperature = Number(splitdata[1]);
+					console.log(splitdata);
 					checkAndExportLogs();
 					break;
 				case "A1": // Accelerometer 1
@@ -151,6 +155,7 @@
 					break;
 				case "SP": // Accelerometer (in RPM)
 					espsensordata.rpm = Number(splitdata[1]);
+					console.log(splitdata);
 					checkAndExportLogs();
 
 					if(espsensordata.rpm == 0) {

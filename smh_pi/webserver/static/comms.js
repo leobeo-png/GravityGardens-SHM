@@ -35,9 +35,10 @@ function humidityD(h, sensorId) {
 		chartTH.series[sensorId + 1].addPoint([x, humidity], true, false, true);
 	}
 }
-socket.on("sensorData", (temperature, humidity) => {
+socket.on("sensorData", (temperature, humidity, rpm) => {
 	temperatureD(temperature, 0);
 	humidityD(humidityD, 0);
+	rpmD(rpm);
 });
 
 function isRunning() {
@@ -67,14 +68,14 @@ function updateGui() {
 	}
 }
 
-socket.on("rpm", (rpm) => {// Add point to the temperature series and limit to 1000 points
+function rpmD(rpm) {// Add point to the temperature series and limit to 1000 points
 	const x = (new Date()).getTime();
 	if (chartR.series[0].data.length > 100) {
 		chartR.series[0].addPoint([x, rpm], true, true, true); // redraw, shift, animation, with event
 	} else {
 		chartR.series[0].addPoint([x, rpm], true, false, true);
 	}
-});
+}
 
 socket.on("experimentdataResponse", (res) => {
 	console.log(res);
@@ -122,9 +123,9 @@ socket.on("lights", (lightsOnIn, timeEnd) => {
 });
 
 socket.on("accData", (accNum, xyz, accelerometerTimingMillis, value) => {
-	if(value != 0) console.log(`${accNum} ${xyz} ${accelerometerTimingMillis} ${value}`);
+	// if(value != 0) console.log(`${accNum} ${xyz} ${accelerometerTimingMillis} ${value}`);
 	const accel = parseFloat(value); 
-	return;
+	// return;
 	
 	let accelAxis;
 	switch(xyz) {
@@ -143,7 +144,7 @@ socket.on("accData", (accNum, xyz, accelerometerTimingMillis, value) => {
 		break;
 	}
 		
-	if (chartA.series[accelAxis].data.length > 10) {
+	if (chartA.series[accelAxis].data.length > 100) {
 		chartA.series[accelAxis].addPoint([accelerometerTimingMillis, accel], true, true, true);
 	} else {
 		chartA.series[accelAxis].addPoint([accelerometerTimingMillis, accel], true, false, true);
