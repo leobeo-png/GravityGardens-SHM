@@ -21,6 +21,7 @@ function isEmptyOrSpaces(str){
 }
 
 app.use(bodyparser.urlencoded({extended: false}));
+app.use("/highcharts", express.static("node_modules/highcharts"));
 app.use(express.static("static"));
 
 app.get("/", (req, res) => {
