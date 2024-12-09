@@ -1,4 +1,4 @@
-const int speedpin = 19;
+const int speedpin = 5;
 const int rpmPin = 14;
 int speed = 187;
 
@@ -16,6 +16,7 @@ float rpm = 0;
 float avgRpm = 0;
 int readr = 0;
 float readRPM(int rPin) {
+  Serial.println(readr);
   if(digitalRead(rPin) == LOW) {
     readr++;
 
@@ -49,7 +50,7 @@ void loop() {
   float crpm = readRPM(rpmPin);
   if(crpm != -1) {
     avgRpm = 0.3f * avgRpm + 0.7f * crpm;
-    Serial.print("rpm: ");
+    Serial.print("SP ");
     Serial.println(avgRpm);
   }
 
