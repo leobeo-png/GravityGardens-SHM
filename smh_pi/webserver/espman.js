@@ -16,6 +16,7 @@
 	var sensorCallback;
 	var statusUpdateCallback;
 	var lightsCallback;
+	var rpmCallback;
 
 	var dataGetInterval;
 
@@ -156,6 +157,8 @@
 				case "SP": // Accelerometer (in RPM)
 					espsensordata.rpm = Number(splitdata[1]);
 					console.log(splitdata);
+					if(typeof(rpmCallback) === "function") rpmCallback(espsensordata.rpm);
+
 					checkAndExportLogs();
 
 					if(espsensordata.rpm == 0) {
@@ -199,6 +202,7 @@
 
 	module.exports.setAccelerometerCallback = function(accFun) { accCallback = accFun; }
 	module.exports.setSensorCallback = function(cb) { sensorCallback = cb; }
+	module.exports.setRpmCallback = function(cb) { rpmCallback = cb; }
 	module.exports.setStatusUpdateCallback = function(cb) { statusUpdateCallback = cb; }
 	module.exports.setLightsCallback = function(cb) { lightsCallback = cb; }
 }());

@@ -5,6 +5,9 @@ var globalExperimentSettings;
 var timerInterval;
 var lightsOn;
 var lightTimeEnd;
+var highestAccelerometerTimeDecay;
+var highestAccelerometerTime;
+var secondHighestAccelerometerTime;
 
 function gToRPM(g) {
 	var womega = Math.sqrt(g * 9.81 / radius);
@@ -149,6 +152,7 @@ socket.on("accData", (accNum, xyz, accelerometerTimingMillis, value) => {
 	} else {
 		chartA.series[accelAxis].addPoint([accelerometerTimingMillis, accel], true, false, true);
 	}
+
 });
 socket.on("status", (status) => {
 	document.getElementById("status-text").innerHTML = `${ status }`;
@@ -160,7 +164,10 @@ function resetAccel () { // call this function for when the RPM changes
 	});
 	chartA.reDraw();
 }
-
+socket.on("rpm", (rpm) => {
+	console.log(rpm);
+	rpmD(rpm);
+});
 
 socket.emit("experimentdataRequest");
 

@@ -143,7 +143,7 @@ server.listen(port, async () => {
 		// dataprvobj[`${accNum}`][xyz] = accelerometerTimingMillis - dataprvobj[`${accNum}`][xyz];
 		// dataspdobj[`${accNum}`][xyz] += (dataprvobj[`${accNum}`][xyz] * 0.001) * value;
 
-		if(datactrobj[`${accNum}`][xyz] > 1) datactrobj[`${accNum}`][xyz] = 0;
+		if(datactrobj[`${accNum}`][xyz] > 2) datactrobj[`${accNum}`][xyz] = 0;
 		else return;
 		if(accNum != 1) return;
 
@@ -160,6 +160,9 @@ server.listen(port, async () => {
 		// console.log(lightsOn, timeEnd);
 		io.sockets.emit("lights", lightsOn, timeEnd);
 	});
+	espman.setRpmCallback((rpm) => {
+		io.sockets.emit("rpm", rpm);
+	})
 	// setInterval(() => {
 	// 	io.sockets.emit("accData", 1, 'x', 215, 0.01);
 	// }, 5000);
