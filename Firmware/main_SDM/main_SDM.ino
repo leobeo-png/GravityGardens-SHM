@@ -3,7 +3,7 @@
 #include "I2C_Hub.h"
 #include "LSM.h"
 #include "string.h"
-#include "wire.h"
+#include "Wire.h"
 #include "TCA9548.h"
 
 CHT8305 *chtSensors[] = {&cht1, &cht2};   
@@ -25,8 +25,8 @@ int doorIsOpen = false;
 int speed = 100;
 int doAutoAdjust = 1;
 long lastAutoAdjust = 0;
-long autoAdjustSpace = 5000;
-long autoAdjustStart = 30000;
+long autoAdjustSpace = 1000;
+long autoAdjustStart = 3000;
 long lastReadRpm = 0;
 long counter = 0;
 long lastCount = 0;
@@ -64,7 +64,7 @@ void loop() {
   // Check door is open
   doorCheck(doorEnabled);
   // read accels
-  readAccels();
+//  readAccels();
   // read Raspberry pi comunication
   ReadPi();
 
@@ -93,10 +93,16 @@ void loop() {
     counter = 0;
   }
 
-  if(avgRpm == 0){
-    Serial.println("SG 0");
-  }else{
-    Serial.println("SG 1");
+//  if(avgRpm == 0){
+//    Serial.println("SG 0");
+//  }else{
+//    Serial.println("SG 1");
+//  }
+  if(setRpm == 0 && avgRpm < 20) {
+    speed = 0;
+    doAutoAdjust = 0;
+  } else {
+    doAutoAdjust = 1;
   }
 
   long cMillis = millis();
@@ -105,14 +111,20 @@ void loop() {
 
     if(avgRpm - setRpmBuffer > setRpm) {
       speed -= setRpmChangeVoltage;
+      if(speed < 0) {
+        speed = 0;
+      }
       //Serial.print("Adjusted to ");
       //Serial.println(speed);
       analogWrite(speedpin, speed);
     }
     if(avgRpm + setRpmBuffer < setRpm) {
       speed += setRpmChangeVoltage;
-      //Serial.print("Adjusted to ");
-      //Serial.println(speed);
+      if(speed > 254) {
+        speed = 254;
+      }
+      Serial.print("Adjusted to ");
+      Serial.println(speed);
       analogWrite(speedpin, speed);
     }
   } 
@@ -196,7 +208,7 @@ long readDelayRpm;
   if(digitalRead(rPin) == LOW) {
     readr++;
 
-    if(readr == 100) {
+    if(readr == 10) {
       long current = micros();
       long diff = current - lastRot;
       lastRot = current;
@@ -292,7 +304,7 @@ void doorCheck(int Enabled){
       Serial.println("SG 0");
       //stop motor
       analogWrite(speedpin,0);
-      readAccels();
+//      readAccels();/
       ReadPi();
       doorIsOpen = digitalRead(doorPin);
     }
