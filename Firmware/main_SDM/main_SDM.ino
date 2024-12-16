@@ -5,6 +5,28 @@
 #include "string.h"
 #include "Wire.h"
 #include "TCA9548.h"
+//////////////////////////////////////////JUNK VARIABLES REMOVE UNUSEDD ONES///////////////////////////////
+const int ledsPin = 13;
+const int pumpPin = 12;
+int ledhigh = LOW;
+int pumphigh = LOW;
+char command;
+char dataIn[20];
+int datacounter = 0;
+bool reset = false;
+
+char dtaUart[15];
+char dtaLen = 0;
+uint8_t Data[100] = {0};
+uint8_t buff[100] = {0};
+
+uint8_t buf[4] = {0};
+uint16_t data, data1;
+#define ADDRESS_SENSOR 0x40
+////////////////////////////////////////////////////////////////////////
+
+
+
 
 //pinout
 const int speedpin = 5;
@@ -41,8 +63,8 @@ int readr = 0;
 
 TCA9548 MP(0x70);
 
-CHT8305 cht1(0x40);
-CHT8305 cht2(0x40); 
+// CHT8305 cht1(0x40);
+// CHT8305 cht2(0x40); 
 
 LSM6DS3 GyroAccel1(I2C_MODE,0x6A);
 LSM6DS3 GyroAccel2(I2C_MODE,0x6A);
@@ -179,15 +201,59 @@ void readHumTemp(){
 //Read and send Tempature and Humidity data
   TCA9548A(7);
   Serial.print("HU ");
-  Serial.println(cht1.readHumidity());
+  Serial.println(readSensorDataHum(ADDRESS_SENSOR));
+  // Serial.println(cht1.readHumidity());
   Serial.print("TE ");
-  Serial.println(cht1.readTemperature());
+  Serial.println(readSensorDataTemp(ADDRESS_SENSOR));
+  // Serial.println(cht1.readTemperature());
   TCA9548A(1);
   Serial.print("HU ");
-  Serial.println(cht2.readHumidity());
+  Serial.println(readSensorDataHum(ADDRESS_SENSOR));
+  // Serial.println(cht2.readHumidity());
   Serial.print("TE ");
-  Serial.println(cht2.readTemperature());
+  Serial.println(readSensorDataTemp(ADDRESS_SENSOR));
+  // Serial.println(cht2.readTemperature());
 }
+
+float readSensorDataHum(uint8_t sensorAddress) {
+    readReg(sensorAddress, 0x00, buf, 4);
+    data1 = buf[2] << 8 | buf[3];
+    return ((float)data1 / 65535.0) * 100;
+}
+
+float readSensorDataTemp(uint8_t sensorAddress) {
+    readReg(sensorAddress, 0x00, buf, 4);
+    data = buf[0] << 8 | buf[1];
+    return ((float)data * 165 / 65535.0) - 40.0;
+}
+
+uint8_t readReg(uint8_t sensorAddress, uint8_t reg, const void* pBuf, size_t size) {
+    if (pBuf == NULL) {
+        return 0;
+    }
+    
+    uint8_t* _pBuf = (uint8_t*)pBuf;
+    Wire.beginTransmission(sensorAddress);
+    Wire.write(&reg, 1);  // Send the register address
+    
+    if (Wire.endTransmission() != 0) {
+        return 0;  // If transmission fails, return 0
+    }
+    
+    delay(20);
+    Wire.requestFrom(sensorAddress, (uint8_t)size);
+    
+    for (uint16_t i = 0; i < size; i++) {
+        _pBuf[i] = Wire.read();  // Read the data into the buffer
+    }
+    
+    return size;
+}
+
+
+
+
+
 
 float readRPM(int rPin) {
 //Read and send RPM sensor data
@@ -329,18 +395,18 @@ void I2Cinit() {
   if (MP.isConnected(0x40) == false){
     Serial.println("temp1 not connected");
   } 
-  if (cht1.begin() == false )
-  {
-    Serial.println("temp1 error");
-  }
+  // if (cht1.begin() == false )
+  // {
+  //   Serial.println("temp1 error");
+  // }
   TCA9548A(1);
   if (MP.isConnected(0x40) == false){
     Serial.println("temp2 not connected");
   } 
-  if (cht2.begin() == false )
-  {
-    Serial.println("temp2 error");
-  }
+  // if (cht2.begin() == false )
+  // {
+  //   Serial.println("temp2 error");
+  // }
 }
 
 // Select I2C BUS
