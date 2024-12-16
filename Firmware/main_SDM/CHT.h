@@ -5,8 +5,8 @@
 #include "CHT8305.h"
 
 // External declarations for CHT8305 sensor objects
-extern CHT8305 cht1;
-extern CHT8305 cht2; 
+// extern CHT8305 cht1;
+// extern CHT8305 cht2; 
 
 // Function declarations
 String readCHTTemperature(CHT8305& cht);

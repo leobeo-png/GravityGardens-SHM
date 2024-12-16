@@ -1,7 +1,7 @@
 #include "CHT.h"
 
-CHT8305 cht1;
-CHT8305 cht2; 
+// CHT8305 cht1;
+// CHT8305 cht2; 
 
 String readCHTTemperature(CHT8305& cht) {
   float temperature = cht.getTemperature();

@@ -2,7 +2,7 @@
 #define TCA9548_H
 
 #include "TCA9548.h"
-extern PCA9546 MP;
+extern TCA9548 MP;
 
 void I2Cinit();
 

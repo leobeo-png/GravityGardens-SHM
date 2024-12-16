@@ -1,7 +1,7 @@
 #include "LSM.h"
 
-LSM6DS3 GyroAccel1;
-LSM6DS3 GyroAccel2;
+// LSM6DS3 GyroAccel1;
+// LSM6DS3 GyroAccel2;
 
 String readLSMGyro(LSM6DS3& GyroAccel, char axis) {
   float gyroValue;

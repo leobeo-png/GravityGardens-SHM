@@ -6,10 +6,6 @@
 #include "Wire.h"
 #include "TCA9548.h"
 
-CHT8305 *chtSensors[] = {&cht1, &cht2};   
-LSM6DS3 *lsmSensors[] = {&GyroAccel1, &GyroAccel2};
-
-
 //pinout
 const int speedpin = 5;
 const int rpmPin = 14;
@@ -43,6 +39,14 @@ float rpm = 0;
 float avgRpm = 0;
 int readr = 0;
 
+TCA9548 MP(0x70);
+
+CHT8305 cht1(0x40);
+CHT8305 cht2(0x40); 
+
+LSM6DS3 GyroAccel1(I2C_MODE,0x6A);
+LSM6DS3 GyroAccel2(I2C_MODE,0x6A);
+
 void setup() {
   //pin setup
   pinMode(speedpin, OUTPUT);
@@ -51,7 +55,6 @@ void setup() {
   pinMode(EstopPin, INPUT);
   
   //init
-  Wire.begin();
   Serial.begin(115200);
   I2Cinit();
   analogWrite(speedpin,speed);
@@ -74,7 +77,6 @@ void loop() {
     avgRpm = 0.3f * avgRpm + 0.7f * crpm;
     Serial.print("SP ");
     Serial.println(avgRpm);
-    //Serial.println("SP "+ avgRPM)
 
     //rpm failsave
     if(avgRpm != setRpm){
@@ -85,7 +87,6 @@ void loop() {
     }
   }
 
-  //Serial.println(counter);
   if(counter - lastCount >= 15000){
     analogWrite(speedpin, 0);
     speed = 0;
@@ -114,8 +115,6 @@ void loop() {
       if(speed < 0) {
         speed = 0;
       }
-      //Serial.print("Adjusted to ");
-      //Serial.println(speed);
       analogWrite(speedpin, speed);
     }
     if(avgRpm + setRpmBuffer < setRpm) {
@@ -123,8 +122,6 @@ void loop() {
       if(speed > 254) {
         speed = 254;
       }
-      Serial.print("Adjusted to ");
-      Serial.println(speed);
       analogWrite(speedpin, speed);
     }
   } 
@@ -135,13 +132,15 @@ void readAccels(){
 //Read and send Accel data and time
 
   //read Sensor 1
-  MP.selectChannel(3);
+  //MP.selectChannel(2);
+  TCA9548A(2);
   double G1X = readLSMAccel(GyroAccel1, 'X').toDouble();
   double G1Y = readLSMAccel(GyroAccel1, 'Y').toDouble();
   double G1Z = readLSMAccel(GyroAccel1, 'Z').toDouble();
 
   //read Sensor 2
-  MP.selectChannel(5);
+  // MP.selectChannel(5);
+  TCA9548A(5);
   double G2X = readLSMAccel(GyroAccel2, 'X').toDouble();
   double G2Y = readLSMAccel(GyroAccel2, 'Y').toDouble();
   double G2Z = readLSMAccel(GyroAccel2, 'Z').toDouble();
@@ -159,47 +158,35 @@ void readAccels(){
   //return time
   Serial.print("AT ");
   Serial.println(accelMillis - lastAccelMillies);
-  //Serial.println("AT " + (accelMillis - lastAccelMillies));
-  
 
   //send Sensor 1 data
   Serial.print("A1 X ");
   Serial.println(G1X);
-  //Serial.println("A1 X " + G1X);
   Serial.print("A1 Y ");
   Serial.println(G1Y);
-  //Serial.println("A1 Y " + G1Y);
   Serial.print("A1 Z ");
   Serial.println(G1Z);
-  //Serial.println("A1 Z " + G1Z);
   //send Sensor 2 data
   Serial.print("A2 X ");
   Serial.println(G2X);
-  //Serial.println("A2 X " + G2X);
   Serial.print("A2 Y ");
   Serial.println(G2Y);
-  //Serial.println("A2 Y " + G2Y);
   Serial.print("A2 Z ");
   Serial.println(G2Z);
-  //Serial.println("A2 Z " + G2Z);
 }
 
 void readHumTemp(){
 //Read and send Tempature and Humidity data
-  MP.selectChannel(1);
+  TCA9548A(7);
   Serial.print("HU ");
-  Serial.println(readCHTHumidity(cht1));
-  //Serial.println("HU " + readCHTHumidity(cht1));
+  Serial.println(cht1.readHumidity());
   Serial.print("TE ");
-  Serial.println(readCHTTemperature(cht1));
-  //Serial.println("TE " + readCHTTemperature(cht1));
-  MP.selectChannel(7);
+  Serial.println(cht1.readTemperature());
+  TCA9548A(1);
   Serial.print("HU ");
-  Serial.println(readCHTHumidity(cht2));
-  //Serial.println("HU " + readCHTHumidity(cht2));
+  Serial.println(cht2.readHumidity());
   Serial.print("TE ");
-  Serial.println(readCHTTemperature(cht2));
-  //Serial.println("TE " + readCHTTemperature(cht2));
+  Serial.println(cht2.readTemperature());
 }
 
 float readRPM(int rPin) {
@@ -311,4 +298,54 @@ void doorCheck(int Enabled){
     Serial.println("DO 0");
     analogWrite(speedpin,speed);
   }
+}
+
+void I2Cinit() {
+  Wire.begin();
+    
+  //  initialize multiplexer
+  if (MP.begin() == false)
+  {
+    Serial.println("Multiplexer error");
+  }
+  // initialize the i2c sensors
+  TCA9548A(2);
+  if (MP.isConnected(0x6A) == false){
+    Serial.println("gyro1 not connected");
+  } 
+  if (GyroAccel1.begin() == false)
+  {
+    Serial.println("gyro1 error");
+  }
+  TCA9548A(5);
+  if (MP.isConnected(0x6A) == false){
+    Serial.println("gyro2 not connected");
+  } 
+  if (GyroAccel2.begin() == false)
+  {
+    Serial.println("gyro2 error");
+  }
+  TCA9548A(7);
+  if (MP.isConnected(0x40) == false){
+    Serial.println("temp1 not connected");
+  } 
+  if (cht1.begin() == false )
+  {
+    Serial.println("temp1 error");
+  }
+  TCA9548A(1);
+  if (MP.isConnected(0x40) == false){
+    Serial.println("temp2 not connected");
+  } 
+  if (cht2.begin() == false )
+  {
+    Serial.println("temp2 error");
+  }
+}
+
+// Select I2C BUS
+void TCA9548A(uint8_t bus){
+  Wire.beginTransmission(0x70);  // TCA9548A address
+  Wire.write(1 << bus);          // send byte to select bus
+  Wire.endTransmission();
 }
