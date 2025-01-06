@@ -99,4 +99,5 @@
 	module.exports.getSettingsList = getSettingsList;
 	module.exports.getExperimentSettings = getExperimentSettings;
 	module.exports.setExperimentSettings = setExperimentSettings;
+	module.exports.writeExperimentLog = writeExperimentLog;
 }());
