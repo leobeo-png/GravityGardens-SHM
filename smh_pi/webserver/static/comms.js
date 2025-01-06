@@ -13,6 +13,7 @@ function gToRPM(g) {
 }
 
 function temperatureD(t, sensorId) {
+	console.log(t);
 	const x = (new Date()).getTime(),
 		temperature = parseFloat(t); // Parse temperature value from response
 
@@ -25,6 +26,7 @@ function temperatureD(t, sensorId) {
 }
 
 function humidityD(h, sensorId) {
+	console.log(h);
 	const x = (new Date()).getTime(),
 		humidity = parseFloat(h); // Parse humidity value from response
 
@@ -69,6 +71,7 @@ function updateGui() {
 }
 
 function rpmD(rpm) {// Add point to the temperature series and limit to 1000 points
+	console.log(rpm);
 	const x = (new Date()).getTime();
 	if (chartR.series[0].data.length > 100) {
 		chartR.series[0].addPoint([x, rpm], true, true, true); // redraw, shift, animation, with event
