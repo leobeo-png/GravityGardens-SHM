@@ -134,7 +134,7 @@ var chartA = new Highcharts.Chart('chart-accel',{
     },
     series: [
         {
-            name: 'Accelerometer 1 - X',
+            name: 'X',
             type: 'line',
             color: '#101D42',
             marker: {
@@ -145,7 +145,7 @@ var chartA = new Highcharts.Chart('chart-accel',{
             }
         },
         {
-            name: 'Accelerometer 1 - Y',
+            name: 'Y',
             type: 'line',
             color: '#00A6A6',
             marker: {
@@ -156,7 +156,7 @@ var chartA = new Highcharts.Chart('chart-accel',{
             }
         },
         {
-            name: 'Accelerometer 1 - Z',
+            name: 'Z',
             type: 'line',
             color: '#8B2635',
             marker: {
@@ -165,40 +165,7 @@ var chartA = new Highcharts.Chart('chart-accel',{
                 radius: 3,
                 fillColor: '#8B2635',
             }
-        },
-        {
-            name: 'Accelerometer 2 - X',
-            type: 'line',
-            color: '#71B48D',
-            marker: {
-				enabled: false,
-                symbol: 'triangle-down',
-                radius: 3,
-                fillColor: '#71B48D',
-            }
-        },
-        {
-            name: 'Accelerometer 2 - Y',
-            type: 'line',
-            color: '#844494',
-            marker: {
-				enabled: false,
-                symbol: 'diamond',
-                radius: 3,
-                fillColor: '#844494',
-            }
-        },
-        {
-            name: 'Accelerometer 2 - Z',
-            type: 'line',
-            color: '#9aa83b',
-            marker: {
-				enabled: false,
-                symbol: 'cross',
-                radius: 3,
-                fillColor: '#9aa83b',
-            }
-        },
+        }
     ],
     title: {
         text: undefined
