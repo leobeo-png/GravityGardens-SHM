@@ -49,7 +49,7 @@
 					console.error("Error: ", err);
 					reject(err);
 				}
-				// console.log(`Wrote ${data} to serial`);
+				console.log(`Wrote ${data} to serial`);
 				resolve();
 			});
 			// console.log(openedSerialport.write);

@@ -85,7 +85,7 @@
 	}
 
 	async function writeExperimentLog(experimentid, rpm, humidity, temperature, lightstatus) {
-		return await rawQuery("INSERT INTO experimentlogs (experimentid, rpm, temperature, humidity, lightstatus) VALUES (?, ?, ?, ?)",
+		return await rawQuery("INSERT INTO experimentlogs (experimentid, rpm, temperature, humidity, lightstatus) VALUES (?, ?, ?, ?, ?)",
 			[ experimentid, rpm, temperature, humidity, lightstatus ]
 		);
 	}
@@ -99,4 +99,5 @@
 	module.exports.getSettingsList = getSettingsList;
 	module.exports.getExperimentSettings = getExperimentSettings;
 	module.exports.setExperimentSettings = setExperimentSettings;
+	module.exports.writeExperimentLog = writeExperimentLog;
 }());

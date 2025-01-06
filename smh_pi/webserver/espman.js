@@ -28,6 +28,7 @@
 		var womega = Math.sqrt(g * 9.81 / radiusMeter);
 		var rpm = womega * (30 / Math.PI);
 		console.log(rpm);
+		return rpm;
 	}
 	function checkAndExportLogs() {
 		console.log(espsensordata);
@@ -35,7 +36,7 @@
 			if(typeof(sensorCallback) === "function")
 				sensorCallback(espsensordata.temperature, espsensordata.humidity, espsensordata.rpm);
 
-			sqlman.writeExperimentLog(settings.experimentid, espsensordata.rpm, espsensordata.temperature, espsensordata.humidity, );
+			// sqlman.writeExperimentLog(settings.experimentid, espsensordata.rpm, espsensordata.temperature, espsensordata.humidity, );
 
 			espsensordata.temperature = 0;
 			espsensordata.humidity = 0;
@@ -108,7 +109,8 @@
 		lightsOn = false;
 		lightStatusFun();
 
-		await serialman.send(`SL ${ gToRPM(settings.target_gravity) }\n`);
+		await serialman.send(`SL ${ Math.floor(gToRPM(settings.target_gravity)) }\n`);
+		console.log("Start sent!");
 	}
 	async function pause() {
 		console.log("Pausing...");
@@ -155,9 +157,10 @@
 					pause();
 					break;
 				case "SP": // Accelerometer (in RPM)
-					espsensordata.rpm = Number(splitdata[1]);
 					console.log(splitdata);
+
 					if(typeof(rpmCallback) === "function") rpmCallback(espsensordata.rpm);
+					espsensordata.rpm = Number(splitdata[1]);
 
 					checkAndExportLogs();
 
@@ -171,6 +174,7 @@
 					accelerometerTimingMillis = Number(splitdata[1]);
 					break;
 				case "EST": // E-stop
+					console.log(splitdata);
 					if(splitdata[1] == "0") {
 						// Return back to normal operation
 						start();
