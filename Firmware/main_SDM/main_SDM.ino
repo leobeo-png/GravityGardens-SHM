@@ -25,14 +25,11 @@ uint16_t data, data1;
 #define ADDRESS_SENSOR 0x40
 ////////////////////////////////////////////////////////////////////////
 
-
-
-
 //pinout
 const int speedpin = 5;
-const int rpmPin = 14;
+const int rpmPin = 16;
 const int doorPin = 17;
-const int EstopPin = 12;
+const int EstopPin = 4;
 
 //global vars
 int accelTrheshold = 100;
@@ -40,7 +37,7 @@ int accelTrheshold = 100;
 int doorEnabled = false;
 int doorIsOpen = false;
 //Motor vars
-int speed = 100;
+int speed = 0;
 int doAutoAdjust = 1;
 long lastAutoAdjust = 0;
 long autoAdjustSpace = 1000;
@@ -48,11 +45,13 @@ long autoAdjustStart = 3000;
 long lastReadRpm = 0;
 long counter = 0;
 long lastCount = 0;
+long lastEstCounter = 0;
+long EstCounter = 0;
 //Accel vars
 long lastAccelMillies = 0;
 long accelMillis;
 
-int setRpm = 155;
+int setRpm = 0;
 int setRpmBuffer = 3;
 int setRpmChangeVoltage = 1;
 
@@ -62,9 +61,6 @@ float avgRpm = 0;
 int readr = 0;
 
 TCA9548 MP(0x70);
-
-// CHT8305 cht1(0x40);
-// CHT8305 cht2(0x40); 
 
 LSM6DS3 GyroAccel1(I2C_MODE,0x6A);
 LSM6DS3 GyroAccel2(I2C_MODE,0x6A);
@@ -89,7 +85,7 @@ void loop() {
   // Check door is open
   doorCheck(doorEnabled);
   // read accels
-//  readAccels();
+  readAccels();
   // read Raspberry pi comunication
   ReadPi();
 
@@ -109,18 +105,19 @@ void loop() {
     }
   }
 
-  if(counter - lastCount >= 15000){
-    analogWrite(speedpin, 0);
-    speed = 0;
-    setRpm = 0;
-    counter = 0;
-  }
+  // if(counter - lastCount >= (300000)){
+  //   analogWrite(speedpin, 0);
+  //   speed = 0;
+  //   setRpm = 0;
+  //   counter = 0;
+  // }
 
-//  if(avgRpm == 0){
-//    Serial.println("SG 0");
-//  }else{
-//    Serial.println("SG 1");
-//  }
+  if(avgRpm == 0){
+    Serial.println("SG 0");
+  }else{
+    Serial.println("SG 1");
+  }
+  
   if(setRpm == 0 && avgRpm < 20) {
     speed = 0;
     doAutoAdjust = 0;
@@ -137,16 +134,15 @@ void loop() {
       if(speed < 0) {
         speed = 0;
       }
-      analogWrite(speedpin, speed);
     }
     if(avgRpm + setRpmBuffer < setRpm) {
       speed += setRpmChangeVoltage;
       if(speed > 254) {
         speed = 254;
       }
-      analogWrite(speedpin, speed);
     }
   } 
+  analogWrite(speedpin, speed);
 }
 
 
@@ -250,11 +246,6 @@ uint8_t readReg(uint8_t sensorAddress, uint8_t reg, const void* pBuf, size_t siz
     return size;
 }
 
-
-
-
-
-
 float readRPM(int rPin) {
 //Read and send RPM sensor data
 long readDelayRpm;
@@ -327,6 +318,8 @@ void ReadPi(){
     //write speed
     analogWrite(speedpin, 0);
   } else if(not strcmp(header,"SL --")){
+    if(speed < 85){speed = 85;}// set speed to minimum drive threshold
+    counter = 0;
     setRpm = atoi(val);
   } else if(not strcmp(header,"GD --")){
     readHumTemp();
@@ -335,15 +328,22 @@ void ReadPi(){
 
 void Estop(){
 // E-stop Pressed
-  if (digitalRead(EstopPin))
+  if (digitalRead(EstopPin)== true)
   {
-    Serial.println("EST 1");
-    //stop motor
-    analogWrite(speedpin, 0);
-    Serial.println("SG 0");
-    while (digitalRead(EstopPin)){/*wait while E-stop is pressed*/}
-    Serial.println("EST 0");
-    analogWrite(speedpin, speed);
+    EstCounter = millis();
+    if(EstCounter - lastEstCounter >= 1500 && digitalRead(EstopPin)){  
+      
+      Serial.println("EST 1");
+      Serial.println("SG 0");
+      analogWrite(speedpin, 0);
+      //stop motor
+      while (digitalRead(EstopPin)){/*wait while E-stop is pressed*/}
+      Serial.println("EST 0");
+      analogWrite(speedpin, speed);  
+      
+    }
+  }else{
+    lastEstCounter = EstCounter;
   }
 }
 
@@ -353,6 +353,7 @@ void doorCheck(int Enabled){
     doorIsOpen = digitalRead(doorPin);
     while (not doorIsOpen &&  not digitalRead(EstopPin))
     {
+      Estop();
       Serial.println("DO 1");
       Serial.println("SG 0");
       //stop motor
