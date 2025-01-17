@@ -1,0 +1,7 @@
+Step 0 (only once): setup environment to be able to use the ESP32.
+Step 0.1: 	For the old IDE: https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/
+			For the new IDE: https://randomnerdtutorials.com/installing-esp32-arduino-ide-2-0/
+Step 0.2: Select WROOM-ESP32-DA module
+
+Step 1: Set motor speed to requested RPM by changing the setRPM variable (This version it is on line number 10)
+Step 2: Upload the code to the ESP32 by pressing the upload button in the arduino environment
